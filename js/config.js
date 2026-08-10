@@ -11,5 +11,5 @@
 window.SITE_CONFIG = {
   // The URL of your RAG backend's query endpoint.
   // Example: "https://your-rag-service.com/api/query"
-  RAG_API_ENDPOINT: "",
+  RAG_API_ENDPOINT: "https://prabhupadarchives.pikapod.net/webhook/dac33c95-5aaf-4900-94fe-4b3b31b6e1b9",
 };
