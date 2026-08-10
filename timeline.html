@@ -1,0 +1,1706 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Interactive 3D Life Timeline — Srila Prabhupada (1896–1977)</title>
+<meta name="description" content="An interactive 3D WebGL timeline showcasing the life, travels, books, and legacy of His Divine Grace A.C. Bhaktivedanta Swami Prabhupada.">
+
+<!-- Google Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;800&family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,400&display=swap" rel="stylesheet">
+
+<!-- Base CSS -->
+<link rel="stylesheet" href="css/style.css">
+
+<!-- Three.js, OrbitControls, and GSAP via CDN -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+
+<style>
+/* ============================================================
+   3D LIFE TIMELINE STYLES (Self-Contained Glassmorphism Theme)
+   ============================================================ */
+:root {
+  --gold-primary: #FFD700;
+  --gold-glow: #FFB800;
+  --gold-amber: #FF9900;
+  --blue-accent: #4CC9FE;
+  --bg-deep: #0a0a1a;
+  --card-bg: rgba(10, 10, 30, 0.88);
+  --card-border: rgba(255, 215, 0, 0.35);
+  --text-main: #FFFFFF;
+  --text-muted: #CBD5E1;
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-heading: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-serif: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+body, html {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background-color: var(--bg-deep);
+  font-family: var(--font-sans);
+  color: var(--text-main);
+}
+
+/* Fixed Navigation bar override */
+.site-nav {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  background: rgba(10, 10, 26, 0.7);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255, 215, 0, 0.15);
+}
+
+/* Canvas Container */
+#canvas-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 1;
+  cursor: grab;
+}
+#canvas-container:active {
+  cursor: grabbing;
+}
+
+/* UI Overlay Layer */
+.timeline-ui-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 10;
+  pointer-events: none; /* Let clicks pass to 3D canvas unless on interactive elements */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-sizing: border-box;
+  padding: 80px 24px 24px 24px;
+}
+
+.timeline-ui-layer * {
+  pointer-events: auto;
+}
+
+/* Top-Right Control HUD */
+.overlay-controls {
+  position: absolute;
+  top: 80px;
+  right: 24px;
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.btn-hud {
+  background: rgba(255, 215, 0, 0.12);
+  border: 1px solid rgba(255, 215, 0, 0.4);
+  color: var(--gold-primary);
+  padding: 10px 18px;
+  border-radius: 30px;
+  font-family: var(--font-sans);
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  cursor: pointer;
+  backdrop-filter: blur(12px);
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-hud:hover {
+  background: var(--gold-primary);
+  color: #000;
+  box-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
+  transform: translateY(-2px);
+}
+
+.year-select-dropdown {
+  background: rgba(15, 15, 35, 0.9);
+  border: 1px solid rgba(255, 215, 0, 0.45);
+  color: #FFF;
+  padding: 10px 18px;
+  border-radius: 25px;
+  font-family: var(--font-sans);
+  font-size: 0.88rem;
+  font-weight: 500;
+  cursor: pointer;
+  backdrop-filter: blur(16px);
+  outline: none;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+  transition: all 0.3s ease;
+  min-width: 240px;
+}
+.year-select-dropdown:hover, .year-select-dropdown:focus {
+  border-color: var(--gold-primary);
+  box-shadow: 0 0 16px rgba(255, 215, 0, 0.5);
+}
+.year-select-dropdown option {
+  background: #0a0a1a;
+  color: #FFF;
+  padding: 10px;
+}
+
+/* Bottom HUD Overlay */
+.overlay-bottom {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.ask-prabhupada-bar {
+  display: flex;
+  align-items: center;
+  background: rgba(15, 15, 35, 0.85);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 215, 0, 0.3);
+  border-radius: 35px;
+  padding: 6px 8px 6px 20px;
+  width: 100%;
+  max-width: 520px;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.6);
+}
+
+.ask-prabhupada-bar input {
+  background: transparent;
+  border: none;
+  color: #FFF;
+  font-family: var(--font-sans);
+  font-size: 0.9rem;
+  outline: none;
+  flex: 1;
+}
+
+.ask-prabhupada-bar input::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.ask-prabhupada-bar button {
+  background: linear-gradient(135deg, var(--gold-primary), var(--gold-amber));
+  border: none;
+  color: #0a0a1a;
+  font-weight: 700;
+  font-size: 0.82rem;
+  padding: 8px 16px;
+  border-radius: 25px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.ask-prabhupada-bar button:hover {
+  box-shadow: 0 0 16px rgba(255, 215, 0, 0.8);
+  transform: scale(1.04);
+}
+
+.nav-instructions {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.65);
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  background: rgba(0, 0, 0, 0.4);
+  padding: 6px 16px;
+  border-radius: 20px;
+  backdrop-filter: blur(8px);
+}
+
+/* Hover HUD Badge */
+.active-hover-badge {
+  position: absolute;
+  bottom: 110px;
+  left: 24px;
+  background: rgba(10, 10, 30, 0.8);
+  border: 1px solid rgba(255, 215, 0, 0.4);
+  backdrop-filter: blur(12px);
+  padding: 10px 18px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  transition: opacity 0.3s ease;
+}
+
+.active-hover-badge .year {
+  font-family: var(--font-serif);
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--gold-primary);
+}
+
+.active-hover-badge .title {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+/* 3D Label Nodes in Overlay HTML space */
+.node-label-element {
+  position: absolute;
+  transform: translate(-50%, -100%);
+  pointer-events: auto;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.node-label-element:hover {
+  transform: translate(-50%, -115%) scale(1.15);
+}
+
+.node-year-tag {
+  background: rgba(15, 15, 35, 0.9);
+  border: 1px solid var(--gold-primary);
+  color: var(--gold-primary);
+  font-family: var(--font-serif);
+  font-weight: 700;
+  font-size: 0.8rem;
+  padding: 3px 8px;
+  border-radius: 12px;
+  box-shadow: 0 0 12px rgba(255, 215, 0, 0.4);
+  white-space: nowrap;
+}
+
+.node-title-tag {
+  font-size: 0.72rem;
+  color: #FFF;
+  background: rgba(0, 0, 0, 0.75);
+  padding: 2px 6px;
+  border-radius: 4px;
+  margin-top: 4px;
+  white-space: nowrap;
+  opacity: 0.85;
+}
+
+/* ============================================================
+   EXPANDED INFORMATION CARD MODAL (Glassmorphism)
+   ============================================================ */
+.card-modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(5, 5, 15, 0.65);
+  backdrop-filter: blur(8px);
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+}
+
+.card-modal-backdrop.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.timeline-info-card {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  backdrop-filter: blur(24px);
+  width: 90%;
+  max-width: 520px;
+  max-height: 85vh;
+  border-radius: 24px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8), 0 0 40px rgba(255, 215, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transform: scale(0.85) translateY(20px);
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  position: relative;
+}
+
+.card-modal-backdrop.active .timeline-info-card {
+  transform: scale(1) translateY(0);
+}
+
+/* Card Header */
+.card-header {
+  padding: 24px 28px 16px 28px;
+  border-bottom: 1px solid rgba(255, 215, 0, 0.2);
+  position: relative;
+  background: linear-gradient(180deg, rgba(255, 215, 0, 0.08) 0%, rgba(0, 0, 0, 0) 100%);
+}
+
+.btn-card-close {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #FFF;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  font-size: 1.1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.btn-card-close:hover {
+  background: var(--gold-primary);
+  color: #000;
+  transform: rotate(90deg);
+}
+
+.card-year-badge {
+  font-family: var(--font-heading);
+  font-size: 0.85rem;
+  color: var(--gold-primary);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.card-title {
+  font-family: var(--font-serif);
+  font-size: 1.6rem;
+  margin: 0 0 6px 0;
+  color: #FFF;
+  line-height: 1.25;
+}
+
+.card-location {
+  font-size: 0.88rem;
+  color: var(--blue-accent);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Card Scrollable Body */
+.card-body {
+  padding: 24px 28px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.card-body::-webkit-scrollbar {
+  width: 6px;
+}
+.card-body::-webkit-scrollbar-thumb {
+  background: rgba(255, 215, 0, 0.3);
+  border-radius: 3px;
+}
+
+.card-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.section-label {
+  font-family: var(--font-heading);
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--gold-primary);
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.card-section ul {
+  margin: 0;
+  padding-left: 20px;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  line-height: 1.55;
+}
+
+.card-section ul li {
+  margin-bottom: 6px;
+}
+
+.quote-box {
+  background: rgba(255, 215, 0, 0.06);
+  border-left: 3px solid var(--gold-primary);
+  padding: 12px 16px;
+  border-radius: 0 12px 12px 0;
+  font-style: italic;
+  font-size: 0.88rem;
+  color: #F1F5F9;
+  line-height: 1.5;
+}
+
+/* Card Action Footer */
+.card-footer {
+  padding: 16px 28px 24px 28px;
+  border-top: 1px solid rgba(255, 215, 0, 0.15);
+  display: flex;
+  gap: 12px;
+  background: rgba(10, 10, 26, 0.95);
+}
+
+.btn-card-action {
+  flex: 1;
+  background: rgba(255, 215, 0, 0.1);
+  border: 1px solid rgba(255, 215, 0, 0.4);
+  color: var(--gold-primary);
+  padding: 12px;
+  border-radius: 14px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.3s ease;
+}
+
+.btn-card-action:hover {
+  background: var(--gold-primary);
+  color: #0a0a1a;
+  box-shadow: 0 0 16px rgba(255, 215, 0, 0.5);
+}
+
+/* Lightbox Modal */
+.lightbox-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.9);
+  z-index: 300;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.lightbox-modal.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.lightbox-img-wrapper {
+  max-width: 85vw;
+  max-height: 75vh;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 0 40px rgba(0, 0, 0, 0.8);
+  border: 1px solid rgba(255, 215, 0, 0.3);
+}
+
+.lightbox-img-wrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.lightbox-caption {
+  margin-top: 16px;
+  color: var(--gold-primary);
+  font-family: var(--font-serif);
+  font-size: 1.1rem;
+}
+
+.lightbox-close {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  color: #FFF;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  font-size: 1.4rem;
+  cursor: pointer;
+}
+
+
+
+/* Keyframe Animations */
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- Navigation Header -->
+<nav class="site-nav">
+  <div class="wrap">
+    <a href="index.html" class="brand">
+      <svg class="flame" viewBox="0 0 20 28" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M10 1C10 1 3 9 3 16C3 20.97 6.13 25 10 25C13.87 25 17 20.97 17 16C17 12.8 15.5 10.2 14 8C14.3 10 13.2 11.5 11.7 12C12.6 8.5 11.8 4.5 10 1Z"/>
+      </svg>
+      Srila Prabhupada Archive
+    </a>
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">☰</button>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="timeline.html" aria-current="page">Timeline</a></li>
+      <li><a href="ask.html">Ask the Archive</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- 3D Canvas Viewport -->
+<div id="canvas-container"></div>
+
+<!-- HTML UI Overlay Layer -->
+<div class="timeline-ui-layer">
+  
+  <!-- Top Left Title -->
+
+
+  <!-- Top Right HUD Controls -->
+  <div class="overlay-controls">
+
+    <select class="year-select-dropdown" id="yearSelectDropdown" aria-label="Select Year">
+      <option value="">Jump to Year...</option>
+    </select>
+  </div>
+
+  <!-- Active Hovered Node HUD Indicator -->
+  <div class="active-hover-badge" id="hoverBadge" style="opacity: 0;">
+    <div class="year" id="hoverBadgeYear">1966</div>
+    <div class="title" id="hoverBadgeTitle">Arrives in New York</div>
+  </div>
+
+  <!-- Bottom Interactive Bar -->
+  <div class="overlay-bottom">
+    <form class="ask-prabhupada-bar" id="askForm">
+      <input type="text" id="askInput" placeholder="Ask Prabhupada (e.g. Where did he travel in 1971?)..." aria-label="Ask Prabhupada query">
+      <button type="submit">Ask →</button>
+    </form>
+    <div class="nav-instructions">Drag to rotate • Scroll to zoom • Click node to explore</div>
+  </div>
+</div>
+
+<!-- 2D Overlay Container for 3D Node Labels -->
+<div id="node-labels-container" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 5;"></div>
+
+<!-- EXPANDED INFORMATION CARD MODAL -->
+<div class="card-modal-backdrop" id="cardModalBackdrop">
+  <div class="timeline-info-card" id="infoCard">
+    <div class="card-header">
+      <button class="btn-card-close" id="btnCardClose" aria-label="Close Card">✕</button>
+      <div class="card-year-badge" id="cardYearBadge">YEAR ──── 1966</div>
+      <h2 class="card-title" id="cardTitle">Arrives in New York / Starts ISKCON</h2>
+      <div class="card-location" id="cardLocation">📍 New York City, USA</div>
+    </div>
+    
+    <div class="card-body">
+      <!-- Major Events -->
+      <div class="card-section" id="sectionEvents">
+        <div class="section-label">📍 Major Events</div>
+        <ul id="listEvents"></ul>
+      </div>
+
+      <!-- Temples Started -->
+      <div class="card-section" id="sectionTemples">
+        <div class="section-label">🛕 Temples Started</div>
+        <ul id="listTemples"></ul>
+      </div>
+
+      <!-- Travels -->
+      <div class="card-section" id="sectionTravels">
+        <div class="section-label">✈️ Travels</div>
+        <ul id="listTravels"></ul>
+      </div>
+
+      <!-- Meetings -->
+      <div class="card-section" id="sectionMeetings">
+        <div class="section-label">👤 Significant Meetings</div>
+        <ul id="listMeetings"></ul>
+      </div>
+
+      <!-- Books -->
+      <div class="card-section" id="sectionBooks">
+        <div class="section-label">📖 Books Written</div>
+        <ul id="listBooks"></ul>
+      </div>
+
+      <!-- Quotes -->
+      <div class="card-section" id="sectionQuotes">
+        <div class="section-label">💬 Key Quote</div>
+        <div class="quote-box" id="textQuote"></div>
+      </div>
+    </div>
+
+    <div class="card-footer">
+      <button class="btn-card-action" id="btnPlayAudio">🔊 PLAY AUDIO</button>
+      <button class="btn-card-action" id="btnViewPhotos">🖼️ VIEW PHOTOS</button>
+    </div>
+  </div>
+</div>
+
+<!-- LIGHTBOX PHOTO MODAL -->
+<div class="lightbox-modal" id="lightboxModal">
+  <button class="lightbox-close" id="lightboxClose">✕</button>
+  <div class="lightbox-img-wrapper">
+    <img id="lightboxImg" src="" alt="Historical Photograph">
+  </div>
+  <div class="lightbox-caption" id="lightboxCaption">Archival Photograph</div>
+</div>
+
+
+
+<!-- JavaScript Logic -->
+<script>
+/* ============================================================
+   COMPLETE DATASET FOR ALL 20 TIMELINE YEARS
+   ============================================================ */
+const timelineData = {
+  1896: {
+    year: 1896,
+    angle: 0,
+    isMajor: true,
+    title: "Birth in Kolkata",
+    location: "Kolkata, India",
+    events: [
+      "Born Abhay Charan De on September 1, 1896 in Tollygunge, Kolkata",
+      "Raised in a devout Vaishnava family by Gour Mohan De and Rajani Devi",
+      "Instilled with deep devotion to Lord Krishna and Sri Chaitanya Mahaprabhu from early childhood"
+    ],
+    temples: ["Family shrine worshiped daily at home in Kolkata"],
+    travels: ["Kolkata, West Bengal"],
+    meetings: ["Family and local sadhus who visited his father's home"],
+    books: ["Early study of Vaishnava scriptures and Sanskrit primers"],
+    quotes: ["'My father was a pure devotee of Krishna... He would always pray that I become a devotee of Radharani.'"],
+    photos: ["assets/images/timeline-01.jpg", "assets/images/portrait-main.jpg"]
+  },
+  1902: {
+    year: 1902,
+    angle: 30,
+    isMajor: false,
+    title: "First Spiritual Institution",
+    location: "Kolkata, India",
+    events: [
+      "Organized miniature Ratha-yatra festivals with neighborhood children at age six",
+      "Attended Scottish Church College later in youth",
+      "Demonstrated intense attraction to temple Deity worship and mridanga drum playing"
+    ],
+    temples: ["Radha-Govinda Temple near home"],
+    travels: ["Kolkata district"],
+    meetings: ["Neighborhood friends and school teachers"],
+    books: ["School curriculum & devotional songs"],
+    quotes: ["'When I was six years old, I asked my father for a small Ratha cart to celebrate Ratha-yatra.'"],
+    photos: ["assets/images/photo-01.jpg"]
+  },
+  1922: {
+    year: 1922,
+    angle: 55,
+    isMajor: true,
+    title: "Meets His Spiritual Master",
+    location: "Kolkata, India",
+    events: [
+      "Met Srila Bhaktisiddhanta Sarasvati Thakura for the first time at Ultadanga Junction Road",
+      "At their very first meeting, his Guru asked him: 'Why don't you preach Lord Chaitanya's message in the English language?'",
+      "This single instruction became the guiding mission for the rest of his life"
+    ],
+    temples: ["Gaudiya Math Center, Kolkata"],
+    travels: ["Kolkata to Allahabad for business"],
+    meetings: ["Srila Bhaktisiddhanta Sarasvati Thakura", "Gaudiya Math scholars"],
+    books: ["English translations of Chaitanya Charitamrta studied"],
+    quotes: ["'You are educated young men. Why don't you preach Lord Chaitanya's message throughout the world in English?' — Bhaktisiddhanta Sarasvati"],
+    photos: ["assets/images/photo-02.jpg"]
+  },
+  1933: {
+    year: 1933,
+    angle: 70,
+    isMajor: false,
+    title: "Initiated as Disciple",
+    location: "Allahabad, India",
+    events: [
+      "Accepted formal initiation (diksha) from Srila Bhaktisiddhanta Sarasvati Thakura on November 21",
+      "Given the spiritual name Abhay Charanaravinda Das",
+      "Deepened commitment to support the Gaudiya Math mission through writing and business"
+    ],
+    temples: ["Allahabad Gaudiya Math"],
+    travels: ["Allahabad, Vrindavan, Kolkata"],
+    meetings: ["Srila Bhaktisiddhanta Sarasvati Thakura", "Godbrothers of Gaudiya Math"],
+    books: ["Essays and poems in honor of his spiritual master"],
+    quotes: ["'I felt that this was my real father, my real master.'"],
+    photos: ["assets/images/photo-03.jpg"]
+  },
+  1944: {
+    year: 1944,
+    angle: 90,
+    isMajor: true,
+    title: "Starts Back to Godhead Magazine",
+    location: "Delhi / Kolkata, India",
+    events: [
+      "Founded and single-handedly published 'Back to Godhead' magazine during WWII",
+      "Wrote, typed, proofread, printed, and personally distributed copies amidst paper rationing",
+      "Established the foundation for Western mass publication of Vedic philosophy"
+    ],
+    temples: ["Home ashram and local Delhi centers"],
+    travels: ["Kolkata, Delhi, Allahabad"],
+    meetings: ["Indian government officers, publishers, and scholars"],
+    books: ["Back to Godhead Magazine (Vol. 1, No. 1-4)"],
+    quotes: ["'Godhead is light. Nescience is darkness. Where there is Godhead there is no nescience.'"],
+    photos: ["assets/images/timeline-04.jpg"]
+  },
+  1948: {
+    year: 1948,
+    angle: 110,
+    isMajor: false,
+    title: "Mission 146: Preaching Blueprint",
+    location: "Allahabad / Delhi, India",
+    events: [
+      "Drafted comprehensive blueprint for world spiritual revival known as Mission 146",
+      "Appealed to Mahatma Gandhi and top leaders to base India's independence on Bhagavad-gita",
+      "Formulated strategy to establish worldwide centers for transcendental education"
+    ],
+    temples: ["Allahabad center"],
+    travels: ["Delhi, Lucknow, Allahabad"],
+    meetings: ["Prominent national leaders and scholars"],
+    books: ["Philosophical papers and commentaries on Geeta"],
+    quotes: ["'Without Krishna consciousness, no political or economic solution will yield true peace.'"],
+    photos: ["assets/images/photo-04.jpg"]
+  },
+  1953: {
+    year: 1953,
+    angle: 130,
+    isMajor: false,
+    title: "Travels to Jhansi & League of Devotees",
+    location: "Jhansi, India",
+    events: [
+      "Founded 'The League of Devotees' in Jhansi as a precursor to ISKCON",
+      "Initiated his first formal disciple, Acharya Prabhakar",
+      "Established daily temple worship and community study classes in Jhansi"
+    ],
+    temples: ["League of Devotees Center, Jhansi"],
+    travels: ["Allahabad → Jhansi → Mathura"],
+    meetings: ["Local citizens, scholars, and early followers in Jhansi"],
+    books: ["Draft prospectus for League of Devotees"],
+    quotes: ["'To unite human society through the spiritual education of Bhagavad-gita.'"],
+    photos: ["assets/images/photo-05.jpg"]
+  },
+  1959: {
+    year: 1959,
+    angle: 150,
+    isMajor: true,
+    title: "Accepts Sannyasa (Renounced Order)",
+    location: "Mathura, India",
+    events: [
+      "Awarded Sannyasa (renounced order of life) on September 17 by Srila Bhakti Prajnana Keshava Gosvami",
+      "Received the title 'Swami' and the name A.C. Bhaktivedanta Swami",
+      "Completely dedicated his life to translating Vedic scriptures for the world"
+    ],
+    temples: ["Keshavji Gaudiya Math, Mathura", "Radha-Damodara Temple, Vrindavan"],
+    travels: ["Mathura → Vrindavan"],
+    meetings: ["Srila Bhakti Prajnana Keshava Gosvami Maharaja"],
+    books: ["Started work on multi-volume Srimad-Bhagavatam translation"],
+    quotes: ["'I have taken this order not for personal liberation, but to fulfill my Guru Maharaja's order.'"],
+    photos: ["assets/images/photo-06.jpg"]
+  },
+  1962: {
+    year: 1962,
+    angle: 170,
+    isMajor: false,
+    title: "Travels to Vrindavan & Bhagavatam Vol. 1",
+    location: "Vrindavan / Delhi, India",
+    events: [
+      "Published Volume 1 of Srimad-Bhagavatam Canto 1 from his quarters at Radha-Damodara temple",
+      "Personally typed manuscript and arranged paper, printing press, and binding in Delhi",
+      "Presented copies to Prime Minister Lal Bahadur Shastri and Indian universities"
+    ],
+    temples: ["Radha-Damodara Temple (Vrindavan)"],
+    travels: ["Vrindavan ↔ Delhi"],
+    meetings: ["Prime Minister Lal Bahadur Shastri", "President Dr. S. Radhakrishnan"],
+    books: ["Srimad-Bhagavatam First Canto, Volume 1"],
+    quotes: ["'Srimad-Bhagavatam is the cultural presentation for the re-spiritualization of the entire human society.'"],
+    photos: ["assets/images/timeline-04.jpg"]
+  },
+  1965: {
+    year: 1965,
+    angle: 195,
+    isMajor: true,
+    title: "Leaves for the West (Jaladuta Voyage)",
+    location: "Atlantic Ocean / Boston, USA",
+    events: [
+      "Boarded cargo ship Jaladuta on August 13 from Calcutta port with 40 rupees and a crate of books",
+      "Endured two severe heart attacks during 35-day ocean voyage",
+      "Arrived at Commonwealth Pier in Boston on September 17, 1965 at age 69"
+    ],
+    temples: ["Radha-Damodara Temple (Departure point)"],
+    travels: ["Calcutta → Colombo → Port Said → Boston (Jaladuta Ship)"],
+    meetings: ["Captain Pandia of Jaladuta", "Sumati Morarji (Scindia Steamship Co.)"],
+    books: ["Srimad-Bhagavatam Cantos 1-3 (3 Volumes)"],
+    quotes: ["'My dear Lord Krishna, how will I make them understand this message of Krishna consciousness? I am very unfortunate, unqualified, and most fallen.'"],
+    photos: ["assets/images/timeline-05.jpg"]
+  },
+  1966: {
+    year: 1966,
+    angle: 215,
+    isMajor: true,
+    title: "Arrives in New York / Starts ISKCON",
+    location: "New York City, USA",
+    events: [
+      "Moved to Lower East Side Manhattan and rented storefront at 26 Second Avenue ('Matchless Gifts')",
+      "Incorporated ISKCON (International Society for Krishna Consciousness) on July 13, 1966",
+      "Led historic outdoor kirtana at Tompkins Square Park on October 9"
+    ],
+    temples: ["First ISKCON Temple: 26 Second Avenue, New York City"],
+    travels: ["Boston → New York City"],
+    meetings: ["Allen Ginsberg", "Hayagriva Das", "Rupanuga Das", "Brahmananda Das"],
+    books: ["Bhagavad-gita manuscript initial work", "Back to Godhead US edition"],
+    quotes: ["'Our mission is to re-awaken the dormant love for God in the hearts of all living beings.'"],
+    photos: ["assets/images/timeline-05.jpg"]
+  },
+  1967: {
+    year: 1967,
+    angle: 235,
+    isMajor: false,
+    title: "San Francisco Temple Established",
+    location: "San Francisco, USA",
+    events: [
+      "Traveled to San Francisco and established Haight-Ashbury temple",
+      "Organized the first public Ratha-yatra (Chariot Festival) in the Western world",
+      "Recovered from health crisis in Stinson Beach and returned to India briefly before returning West"
+    ],
+    temples: ["San Francisco Temple (Haight-Ashbury)", "Montreal Temple"],
+    travels: ["New York → San Francisco → Stinson Beach → Kolkata → New York"],
+    meetings: ["Mukunda Das", "Shyamasundar Das", "Yamuna Devi"],
+    books: ["Teachings of Lord Chaitanya (manuscript)"],
+    quotes: ["'San Francisco has become Jagannatha Puri of the West!'"],
+    photos: ["assets/images/photo-01.jpg"]
+  },
+  1968: {
+    year: 1968,
+    angle: 250,
+    isMajor: false,
+    title: "Travels to Montreal / London",
+    location: "Montreal, Canada / London, UK",
+    events: [
+      "Published 'Bhagavad-gita As It Is' (Macmillan Company edition)",
+      "Sent six pioneer disciples (three married couples) to London to establish ISKCON UK",
+      "Established New Vrindaban eco-community in West Virginia"
+    ],
+    temples: ["Montreal Temple", "New Vrindaban Farm Community", "Los Angeles Temple"],
+    travels: ["San Francisco → Montreal → Santa Fe → Los Angeles"],
+    meetings: ["Macmillan Publishers editor", "University professors and counter-culture leaders"],
+    books: ["Bhagavad-gita As It Is (Macmillan Edition)", "Teachings of Lord Chaitanya"],
+    quotes: ["'Simple living, high thinking — that is the Vedic lifestyle.'"],
+    photos: ["assets/images/timeline-06.jpg"]
+  },
+  1970: {
+    year: 1970,
+    angle: 270,
+    isMajor: true,
+    title: "First Temple in London & GBC",
+    location: "London, UK / World",
+    events: [
+      "Established first London temple at 7 Bury Place near British Museum",
+      "Formed the Governing Body Commission (GBC) on July 28 to manage worldwide society",
+      "Hare Krishna Mantra song produced with George Harrison hit UK Top 10 music charts"
+    ],
+    temples: ["7 Bury Place, London", "Tokyo Temple", "Bombay Center"],
+    travels: ["Los Angeles → Tokyo → Calcutta → London → Paris"],
+    meetings: ["George Harrison", "John Lennon & Yoko Ono at Tittenhurst Park"],
+    books: ["KRSNA: The Supreme Personality of Godhead (foreword by George Harrison)"],
+    quotes: ["'George Harrison has rendered immense service by helping publish the Krishna Book.'"],
+    photos: ["assets/images/photo-02.jpg"]
+  },
+  1971: {
+    year: 1971,
+    angle: 285,
+    isMajor: false,
+    title: "Travels to Europe / India / USSR",
+    location: "Moscow, USSR / India / USA",
+    events: [
+      "Traveled to Moscow, USSR behind Iron Curtain; met Anatoly Pinyayev (Ananta-shanti)",
+      "Acquired land in Mayapur (West Bengal) and Juhu (Bombay) for flagship international centers",
+      "Toured across India with Western disciples in historic 'Pandal Preaching' events"
+    ],
+    temples: ["Mayapur Chandrodaya Mandir land", "Juhu Bombay Center", "Moscow study circle"],
+    travels: ["New York → London → Moscow → Paris → Bombay → Calcutta"],
+    meetings: ["Prof. G.G. Kotovsky (Head of India Dept, USSR Academy of Sciences)", "Anatoly Pinyayev"],
+    books: ["Nectar of Devotion", "Easy Journey to Other Planets"],
+    quotes: ["'In Russia the people are spirit souls searching for God beneath the shadow of materialism.'"],
+    photos: ["assets/images/timeline-07.jpg"]
+  },
+  1972: {
+    year: 1972,
+    angle: 305,
+    isMajor: true,
+    title: "SACRED Eternal / BBT & Mayapur",
+    location: "Mayapur, India / Los Angeles, USA",
+    events: [
+      "Founded the Bhaktivedanta Book Trust (BBT) to publish scriptures in over 80 languages",
+      "Laid foundation stone for Sri Mayapur Chandrodaya Mandir on Gaura Purnima",
+      "Delivered celebrated lecture series on 'Nectar of Devotion' in Vrindavan and Bombay"
+    ],
+    temples: ["Mayapur World Headquarters", "Bhaktivedanta Book Trust HQ (Los Angeles)", "Sydney Temple"],
+    travels: ["Bombay → Mayapur → Sydney → Auckland → Los Angeles → London"],
+    meetings: ["Chief Justices, Indian industrialists, international scholars"],
+    books: ["Srimad-Bhagavatam Canto 2 & 3", "Nectar of Instruction (Upadesamrta)"],
+    quotes: ["'The publication and distribution of my books is my life and soul.'"],
+    photos: ["assets/images/photo-03.jpg"]
+  },
+  1973: {
+    year: 1973,
+    angle: 320,
+    isMajor: false,
+    title: "Travels to Australia / Africa",
+    location: "London, UK / Melbourne, Australia",
+    events: [
+      "Accepted donation of 17-acre estate 'Bhaktivedanta Manor' in Hertfordshire from George Harrison",
+      "Traveled to Sydney, Melbourne, and Johannesburg, South Africa for major public lectures",
+      "Engaged leading scientists in dialogue on origin of life ('Life Comes From Life')"
+    ],
+    temples: ["Bhaktivedanta Manor (UK)", "Melbourne Temple", "Paris Temple"],
+    travels: ["London → New York → Chicago → Los Angeles → Sydney → Melbourne → London"],
+    meetings: ["George Harrison", "Dr. Thoudam Singh (Bhaktivedanta Institute)", "Mayor of Los Angeles"],
+    books: ["Sri Isopanisad", "Life Comes From Life"],
+    quotes: ["'Life comes from life, not from matter. Matter is produced by life.'"],
+    photos: ["assets/images/timeline-06.jpg"]
+  },
+  1974: {
+    year: 1974,
+    angle: 340,
+    isMajor: false,
+    title: "Visits South America",
+    location: "Caracas, Venezuela / Rome / Geneva",
+    events: [
+      "Pioneered preaching in South America with visit to Caracas, Venezuela",
+      "Met with Pope's representatives in Rome and scholars at the United Nations in Geneva",
+      "Expanded book distribution program to millions of copies annually worldwide"
+    ],
+    temples: ["Caracas Temple (Venezuela)", "Rome Temple", "Geneva Center", "Frankfurt Center"],
+    travels: ["Bombay → Rome → Geneva → Paris → Frankfurt → Caracas → Los Angeles"],
+    meetings: ["Cardinal Pignedoli (Vatican)", "UNESCO representatives", "Venezuelan press and dignitaries"],
+    books: ["Chaitanya-caritamrta (Adi-lila volumes)"],
+    quotes: ["'My books will be the lawbooks for the next ten thousand years of human civilization.'"],
+    photos: ["assets/images/photo-04.jpg"]
+  },
+  1975: {
+    year: 1975,
+    angle: 355,
+    isMajor: false,
+    title: "World Tour & Vrindavan Opening",
+    location: "Vrindavan, India / Worldwide",
+    events: [
+      "Inaugurated grand Krishna-Balarama Temple and International Guest House in Vrindavan",
+      "Completed publication of 17-volume Sri Chaitanya-caritamrta in an extraordinary 18-month marathon",
+      "Toured South Africa, meeting thousands of citizens and political leaders in Durban and Johannesburg"
+    ],
+    temples: ["Krishna-Balarama Temple (Vrindavan)", "Durban Center (South Africa)", "Dallas Gurukula"],
+    travels: ["Vrindavan → Tokyo → Honolulu → San Francisco → Chicago → London → Durban → Mauritius"],
+    meetings: ["Mangosuthu Buthelezi (Zulu Leader)", "Durban City Officials", "Global Academic Scholars"],
+    books: ["Sri Caitanya-caritamrta (17 Volumes Completed)"],
+    quotes: ["'Vrindavan is my home, Mayapur is my place of worship, and London/America is my workplace.'"],
+    photos: ["assets/images/timeline-07.jpg"]
+  },
+  1977: {
+    year: 1977,
+    angle: 370,
+    isMajor: true,
+    title: "Departure in Vrindavan, India",
+    location: "Vrindavan, India",
+    events: [
+      "Spent final months dictating Srimad-Bhagavatam Tenth Canto translation from his bed in Vrindavan",
+      "Passed away peacefully on November 14, 1977 at Krishna-Balarama Temple while surrounded by chanting disciples",
+      "Left behind over 80 books translated into 30+ languages, 108 temples, and thousands of dedicated disciples"
+    ],
+    temples: ["108 Temples Established across 6 Continents"],
+    travels: ["Hrishikesh → Mayapur → Vrindavan"],
+    meetings: ["Leading disciples, GBC members, Indian scholars, and saintly personalities"],
+    books: ["Srimad-Bhagavatam Tenth Canto (Chapters 1-13 completed)"],
+    quotes: ["'I will never die. I will live forever in my books, and you will utilize them.'"],
+    photos: ["assets/images/timeline-08.jpg", "assets/images/portrait-main.jpg"]
+  }
+};
+
+/* ============================================================
+   WEB AUDIO API SOUND GENERATOR
+   ============================================================ */
+function playChime(freq = 523.25, duration = 0.8) {
+  try {
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    if (!AudioCtx) return;
+    if (!window.audioCtx) window.audioCtx = new AudioCtx();
+    if (window.audioCtx.state === 'suspended') {
+      window.audioCtx.resume();
+    }
+    const ctx = window.audioCtx;
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(freq, ctx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(freq * 1.5, ctx.currentTime + duration * 0.3);
+    
+    gain.gain.setValueAtTime(0.2, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + duration);
+    
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    
+    osc.start();
+    osc.stop(ctx.currentTime + duration);
+  } catch (e) {
+    console.warn("Audio Context sound blocked or uninitialized", e);
+  }
+}
+
+/* ============================================================
+   THREE.JS 3D SCENE SETUP
+   ============================================================ */
+const container = document.getElementById('canvas-container');
+const labelsContainer = document.getElementById('node-labels-container');
+
+// Scene, Camera, Renderer
+const scene = new THREE.Scene();
+scene.fog = new THREE.FogExp2(0x0a0a1a, 0.025);
+
+const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+camera.position.set(0, 4, 14);
+
+const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.2;
+container.appendChild(renderer.domElement);
+
+// Orbit Controls
+const controls = new THREE.OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true;
+controls.dampingFactor = 0.05;
+controls.maxDistance = 25;
+controls.minDistance = 5;
+controls.enablePan = false;
+
+// Lighting
+const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+scene.add(ambientLight);
+
+const sunLight = new THREE.DirectionalLight(0xfffaed, 1.8);
+sunLight.position.set(12, 10, 10);
+scene.add(sunLight);
+
+const blueGlowLight = new THREE.DirectionalLight(0x4cc9fe, 0.8);
+blueGlowLight.position.set(-12, -8, -10);
+scene.add(blueGlowLight);
+
+/* ------------------------------------------------------------
+   A. Central Earth Sphere & Procedural Texture Fallback
+   ------------------------------------------------------------ */
+const EARTH_RADIUS = 2.4;
+const earthGroup = new THREE.Group();
+earthGroup.rotation.z = THREE.MathUtils.degToRad(23.5); // Earth axial tilt
+scene.add(earthGroup);
+
+// Generate procedural fallback canvas texture for Earth
+function createProceduralEarthTexture() {
+  const canvas = document.createElement('canvas');
+  canvas.width = 2048;
+  canvas.height = 1024;
+  const ctx = canvas.getContext('2d');
+
+  // Oceans gradient
+  const oceanGrad = ctx.createLinearGradient(0, 0, 0, canvas.height);
+  oceanGrad.addColorStop(0, '#06132b');
+  oceanGrad.addColorStop(0.5, '#0b2545');
+  oceanGrad.addColorStop(1, '#06132b');
+  ctx.fillStyle = oceanGrad;
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  // Lat/Long Lines
+  ctx.strokeStyle = 'rgba(255, 215, 0, 0.08)';
+  ctx.lineWidth = 2;
+  for (let x = 0; x <= canvas.width; x += 128) {
+    ctx.beginPath();
+    ctx.moveTo(x, 0);
+    ctx.lineTo(x, canvas.height);
+    ctx.stroke();
+  }
+  for (let y = 0; y <= canvas.height; y += 128) {
+    ctx.beginPath();
+    ctx.moveTo(0, y);
+    ctx.lineTo(canvas.width, y);
+    ctx.stroke();
+  }
+
+  // Draw Procedural Continents (Stylized Green/Gold Landmass Polygons)
+  ctx.fillStyle = '#1e3d30';
+  ctx.strokeStyle = 'rgba(255, 215, 0, 0.4)';
+  ctx.lineWidth = 3;
+
+  function drawLand(points) {
+    ctx.beginPath();
+    points.forEach((pt, idx) => {
+      const x = (pt[0] / 360 + 0.5) * canvas.width;
+      const y = (0.5 - pt[1] / 180) * canvas.height;
+      if (idx === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    });
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+  }
+
+  // North America
+  drawLand([[-160, 65], [-120, 70], [-80, 50], [-75, 25], [-100, 20], [-120, 35]]);
+  // South America
+  drawLand([[-80, 10], [-40, -10], [-55, -50], [-75, -45], [-80, 10]]);
+  // Eurasia / India
+  drawLand([[10, 60], [140, 65], [120, 30], [80, 10], [70, 25], [40, 35], [20, 45]]);
+  // India Highlight
+  ctx.fillStyle = '#b8860b';
+  drawLand([[68, 24], [88, 26], [80, 8]]);
+  ctx.fillStyle = '#1e3d30';
+  // Africa
+  drawLand([[-15, 35], [50, 30], [40, -30], [15, -35], [-15, 10]]);
+  // Australia
+  drawLand([[115, -15], [150, -15], [145, -38], [115, -35]]);
+
+  // Golden City Light Dots
+  ctx.fillStyle = '#ffd700';
+  for (let i = 0; i < 400; i++) {
+    const rx = Math.random() * canvas.width;
+    const ry = Math.random() * canvas.height;
+    ctx.fillRect(rx, ry, 2, 2);
+  }
+
+  return new THREE.CanvasTexture(canvas);
+}
+
+// Earth Material with texture loading & fallback
+const earthGeo = new THREE.SphereGeometry(EARTH_RADIUS, 64, 64);
+let earthMaterial = new THREE.MeshPhongMaterial({
+  map: createProceduralEarthTexture(),
+  shininess: 25,
+  bumpScale: 0.05
+});
+
+const earthMesh = new THREE.Mesh(earthGeo, earthMaterial);
+earthGroup.add(earthMesh);
+
+// Load High-Res Earth Texture if available over network
+const textureLoader = new THREE.TextureLoader();
+textureLoader.load(
+  'https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/textures/planets/earth_atmos_2048.jpg',
+  (tex) => {
+    earthMaterial.map = tex;
+    earthMaterial.needsUpdate = true;
+  },
+  undefined,
+  (err) => {
+    console.log("Earth texture image CDN fallback active (procedural earth loaded)");
+  }
+);
+
+// Earth Outer Atmosphere Glow Shader/Mesh
+const atmosphereGeo = new THREE.SphereGeometry(EARTH_RADIUS * 1.12, 64, 64);
+const atmosphereMat = new THREE.ShaderMaterial({
+  vertexShader: `
+    varying vec3 vNormal;
+    void main() {
+      vNormal = normalize(normalMatrix * normal);
+      gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+    }
+  `,
+  fragmentShader: `
+    varying vec3 vNormal;
+    void main() {
+      float intensity = pow(0.6 - dot(vNormal, vec3(0, 0, 1.0)), 2.5);
+      gl_FragColor = vec4(0.3, 0.75, 1.0, 1.0) * intensity;
+    }
+  `,
+  blending: THREE.AdditiveBlending,
+  side: THREE.BackSide,
+  transparent: true
+});
+const atmosphereMesh = new THREE.Mesh(atmosphereGeo, atmosphereMat);
+earthGroup.add(atmosphereMesh);
+
+/* ------------------------------------------------------------
+   B. Deep Space Starfield & Cosmic Dust
+   ------------------------------------------------------------ */
+const starCount = 1800;
+const starGeo = new THREE.BufferGeometry();
+const starPositions = new Float32Array(starCount * 3);
+const starScales = new Float32Array(starCount);
+
+for (let i = 0; i < starCount; i++) {
+  starPositions[i * 3] = (Math.random() - 0.5) * 300;
+  starPositions[i * 3 + 1] = (Math.random() - 0.5) * 300;
+  starPositions[i * 3 + 2] = (Math.random() - 0.5) * 300;
+  starScales[i] = Math.random() * 1.5 + 0.5;
+}
+
+starGeo.setAttribute('position', new THREE.BufferAttribute(starPositions, 3));
+const starMat = new THREE.PointsMaterial({
+  color: 0xffffff,
+  size: 0.8,
+  transparent: true,
+  opacity: 0.85
+});
+const starField = new THREE.Points(starGeo, starMat);
+scene.add(starField);
+
+/* ------------------------------------------------------------
+   C. Tilted Timeline Orbit Ring & Nodes
+   ------------------------------------------------------------ */
+const ORBIT_RADIUS = 6.2;
+const ORBIT_TILT_X = THREE.MathUtils.degToRad(35); // 35 degree tilt
+
+// Golden Orbit Ring Group
+const orbitGroup = new THREE.Group();
+orbitGroup.rotation.x = ORBIT_TILT_X;
+scene.add(orbitGroup);
+
+// Orbit Curve Line (with a clear break/gap between start 180° and end 550°)
+// By placing the start node on the left edge (180°), we fix the swapped left-to-right reading order.
+const startAngle = THREE.MathUtils.degToRad(192);
+const endAngle = THREE.MathUtils.degToRad(538);
+const ringCurve = new THREE.EllipseCurve(0, 0, ORBIT_RADIUS, ORBIT_RADIUS, startAngle, endAngle, false, 0);
+const ringPoints = ringCurve.getPoints(128);
+const ringGeo = new THREE.BufferGeometry().setFromPoints(ringPoints);
+const ringMat = new THREE.LineBasicMaterial({ color: 0xFFD700, transparent: true, opacity: 0.65, linewidth: 2 });
+const ringLine = new THREE.Line(ringGeo, ringMat);
+ringLine.rotation.x = Math.PI / 2;
+orbitGroup.add(ringLine);
+
+/* ------------------------------------------------------------
+   D. Creating 3D Timeline Nodes & HTML Overlay Labels
+   ------------------------------------------------------------ */
+const nodesMap = {};
+const nodeMeshes = [];
+
+// Populate Year Selector Dropdown
+const dropdown = document.getElementById('yearSelectDropdown');
+dropdown.replaceChildren(); // Clear existing options
+const defaultOpt = document.createElement('option');
+defaultOpt.value = "";
+defaultOpt.textContent = "🔍 Search or Select Year...";
+dropdown.appendChild(defaultOpt);
+
+Object.keys(timelineData).sort((a,b) => a - b).forEach(yr => {
+  const opt = document.createElement('option');
+  opt.value = yr;
+  opt.textContent = `${yr} — ${timelineData[yr].title}`;
+  dropdown.appendChild(opt);
+});
+
+// Create Nodes - Simple uniform small spheres
+Object.keys(timelineData).forEach(yearKey => {
+  const data = timelineData[yearKey];
+  // Rotate by 180 degrees so 1896 starts on the left (fixing swapped places)
+  const angleRad = THREE.MathUtils.degToRad(data.angle + 180);
+
+  // Position on Orbit Ring in local orbit space (X-Z plane rotated)
+  const lx = ORBIT_RADIUS * Math.cos(angleRad);
+  const lz = ORBIT_RADIUS * Math.sin(angleRad);
+  const ly = 0;
+
+  // Node Mesh (Clean small sphere)
+  const isStart = (data.year === 1896);
+  const isEnd = (data.year === 1977);
+  const nodeRadius = (isStart || isEnd) ? 0.18 : 0.13;
+  const nodeGeo = new THREE.SphereGeometry(nodeRadius, 20, 20);
+  const nodeMat = new THREE.MeshStandardMaterial({
+    color: (isStart || isEnd) ? 0xFFD700 : 0x4CC9FE,
+    emissive: (isStart || isEnd) ? 0xFF9900 : 0x006699,
+    emissiveIntensity: (isStart || isEnd) ? 0.8 : 0.4,
+    roughness: 0.3,
+    metalness: 0.7
+  });
+
+  const nodeMesh = new THREE.Mesh(nodeGeo, nodeMat);
+  nodeMesh.position.set(lx, ly, lz);
+  nodeMesh.userData = { year: data.year, data: data, originalScale: 1, angleRad: angleRad };
+  orbitGroup.add(nodeMesh);
+  nodeMeshes.push(nodeMesh);
+
+  // Create HTML Label Element attached to 3D node
+  const labelEl = document.createElement('div');
+  labelEl.className = 'node-label-element';
+  let yearTagText = `${data.year}`;
+  if (isStart) yearTagText = `▶ ${data.year} (START)`;
+  if (isEnd) yearTagText = `🏁 ${data.year} (END)`;
+
+  labelEl.innerHTML = `
+    <div class="node-year-tag">${yearTagText}</div>
+    <div class="node-title-tag">${data.title}</div>
+  `;
+
+  // Click & Hover Events on HTML label
+  labelEl.addEventListener('click', (e) => {
+    e.stopPropagation();
+    selectNode(nodeMesh);
+  });
+  labelEl.addEventListener('mouseenter', () => {
+    onNodeHover(nodeMesh);
+  });
+  labelEl.addEventListener('mouseleave', () => {
+    onNodeLeave(nodeMesh);
+  });
+
+  labelsContainer.appendChild(labelEl);
+
+  nodesMap[yearKey] = {
+    mesh: nodeMesh,
+    labelEl: labelEl,
+    data: data
+  };
+});
+
+/* ------------------------------------------------------------
+   E. Raycasting & Hover / Click Interactions
+   ------------------------------------------------------------ */
+const raycaster = new THREE.Raycaster();
+const mouse = new THREE.Vector2();
+let hoveredNode = null;
+let selectedNode = null;
+
+window.addEventListener('mousemove', (e) => {
+  mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
+  mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
+
+  raycaster.setFromCamera(mouse, camera);
+  const intersects = raycaster.intersectObjects(nodeMeshes);
+
+  if (intersects.length > 0) {
+    const mesh = intersects[0].object;
+    if (hoveredNode !== mesh) {
+      if (hoveredNode) onNodeLeave(hoveredNode);
+      onNodeHover(mesh);
+    }
+  } else {
+    if (hoveredNode) {
+      onNodeLeave(hoveredNode);
+      hoveredNode = null;
+    }
+  }
+});
+
+window.addEventListener('click', (e) => {
+  // Ignore clicks on UI elements
+  if (e.target.closest('.timeline-ui-layer') || e.target.closest('.card-modal-backdrop')) return;
+
+  raycaster.setFromCamera(mouse, camera);
+  const intersects = raycaster.intersectObjects(nodeMeshes);
+  if (intersects.length > 0) {
+    selectNode(intersects[0].object);
+  }
+});
+
+function onNodeHover(mesh) {
+  hoveredNode = mesh;
+  document.body.style.cursor = 'pointer';
+  playChime(600, 0.2);
+
+  // Scale up mesh
+  gsap.to(mesh.scale, { x: 1.35, y: 1.35, z: 1.35, duration: 0.3, ease: 'power2.out' });
+  mesh.material.emissiveIntensity = 1.2;
+
+  // Show hover badge
+  const badge = document.getElementById('hoverBadge');
+  document.getElementById('hoverBadgeYear').textContent = mesh.userData.data.year;
+  document.getElementById('hoverBadgeTitle').textContent = mesh.userData.data.title;
+  badge.style.opacity = '1';
+}
+
+function onNodeLeave(mesh) {
+  document.body.style.cursor = 'default';
+  if (selectedNode !== mesh) {
+    gsap.to(mesh.scale, { x: 1, y: 1, z: 1, duration: 0.3, ease: 'power2.out' });
+    mesh.material.emissiveIntensity = (mesh.userData.data.year === 1896 || mesh.userData.data.year === 1977) ? 0.8 : 0.4;
+  }
+  document.getElementById('hoverBadge').style.opacity = '0';
+}
+
+/* ------------------------------------------------------------
+   F. Select Node & Open Expanded Information Card Modal
+   ------------------------------------------------------------ */
+function selectNode(mesh) {
+  selectedNode = mesh;
+  const data = mesh.userData.data;
+
+  playChime(784, 0.5); // C5 note
+
+  // Dim other node meshes to 50% opacity
+  nodeMeshes.forEach(m => {
+    if (m !== mesh) {
+      gsap.to(m.material, { opacity: 0.35, duration: 0.4 });
+      m.material.transparent = true;
+    } else {
+      gsap.to(m.material, { opacity: 1, duration: 0.4 });
+    }
+  });
+
+  // Smooth GSAP Camera Transition towards selected node position
+  const worldPos = new THREE.Vector3();
+  mesh.getWorldPosition(worldPos);
+
+  const targetCamPos = new THREE.Vector3()
+    .copy(worldPos)
+    .add(new THREE.Vector3(0, 1.5, 5.5));
+
+  gsap.to(camera.position, {
+    x: targetCamPos.x,
+    y: targetCamPos.y,
+    z: targetCamPos.z,
+    duration: 1.2,
+    ease: 'power3.inOut'
+  });
+
+  gsap.to(controls.target, {
+    x: worldPos.x,
+    y: worldPos.y,
+    z: worldPos.z,
+    duration: 1.2,
+    ease: 'power3.inOut',
+    onUpdate: () => controls.update()
+  });
+
+  // Populate Information Card Modal
+  document.getElementById('cardYearBadge').textContent = `YEAR ──── ${data.year}`;
+  document.getElementById('cardTitle').textContent = `${data.title}`;
+  document.getElementById('cardLocation').textContent = `📍 ${data.location}`;
+
+  function populateList(elementId, items) {
+    const ul = document.getElementById(elementId);
+    ul.replaceChildren();
+    if (!items || items.length === 0) {
+      const li = document.createElement('li');
+      li.textContent = "None recorded for this specific year.";
+      li.style.fontStyle = "italic";
+      li.style.opacity = "0.7";
+      ul.appendChild(li);
+    } else {
+      items.forEach(it => {
+        const li = document.createElement('li');
+        li.textContent = it;
+        ul.appendChild(li);
+      });
+    }
+  }
+
+  populateList('listEvents', data.events);
+  populateList('listTemples', data.temples);
+  populateList('listTravels', data.travels);
+  populateList('listMeetings', data.meetings);
+  populateList('listBooks', data.books);
+
+  const quoteBox = document.getElementById('textQuote');
+  if (data.quotes && data.quotes.length > 0) {
+    quoteBox.textContent = data.quotes[0];
+    quoteBox.parentElement.style.display = 'block';
+  } else {
+    quoteBox.parentElement.style.display = 'none';
+  }
+
+  // Open Card Backdrop
+  document.getElementById('cardModalBackdrop').classList.add('active');
+}
+
+// Close Card Action
+function closeCard() {
+  document.getElementById('cardModalBackdrop').classList.remove('active');
+  selectedNode = null;
+
+  // Restore opacity for all node meshes
+  nodeMeshes.forEach(m => {
+    gsap.to(m.material, { opacity: 1, duration: 0.4 });
+    gsap.to(m.scale, { x: 1, y: 1, z: 1, duration: 0.3 });
+  });
+
+  // Reset Camera to default view
+  gsap.to(camera.position, { x: 0, y: 4, z: 14, duration: 1.2, ease: 'power3.inOut' });
+  gsap.to(controls.target, { x: 0, y: 0, z: 0, duration: 1.2, ease: 'power3.inOut', onUpdate: () => controls.update() });
+}
+
+document.getElementById('btnCardClose').addEventListener('click', closeCard);
+document.getElementById('cardModalBackdrop').addEventListener('click', (e) => {
+  if (e.target === document.getElementById('cardModalBackdrop')) closeCard();
+});
+
+// Dropdown Navigation
+dropdown.addEventListener('change', (e) => {
+  const val = e.target.value;
+  if (val && nodesMap[val]) {
+    selectNode(nodesMap[val].mesh);
+  }
+});
+
+/* ------------------------------------------------------------
+   G. Action Buttons: Play Audio & View Photos
+   ------------------------------------------------------------ */
+document.getElementById('btnPlayAudio').addEventListener('click', () => {
+  if (!selectedNode) return;
+  const data = selectedNode.userData.data;
+  playChime(523.25, 0.3); // Gentle C5 chime
+  setTimeout(() => playChime(659.25, 0.3), 150); // E5
+  setTimeout(() => playChime(783.99, 0.4), 300); // G5
+
+  const textToRead = `${data.year}: ${data.title}. ${data.events[0]}`;
+
+  // Use natural speech synthesis voice with async voices initialization
+  if ('speechSynthesis' in window) {
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(textToRead);
+
+    const speakWithBestVoice = () => {
+      const voices = window.speechSynthesis.getVoices();
+      if (voices.length > 0) {
+        // Find best human/natural sounding voice (Neural, Natural, Google, Online English)
+        const naturalVoice = voices.find(v => 
+          (v.name.includes('Natural') || v.name.includes('Online') || v.name.includes('Google') || v.name.includes('Neural')) && v.lang.startsWith('en')
+        ) || voices.find(v => v.lang.startsWith('en')) || voices[0];
+        if (naturalVoice) utterance.voice = naturalVoice;
+      }
+      utterance.rate = 0.92;
+      utterance.pitch = 1.0;
+      window.speechSynthesis.speak(utterance);
+    };
+
+    if (window.speechSynthesis.getVoices().length > 0) {
+      speakWithBestVoice();
+    } else {
+      window.speechSynthesis.onvoiceschanged = speakWithBestVoice;
+      speakWithBestVoice();
+    }
+  }
+});
+
+document.getElementById('btnViewPhotos').addEventListener('click', () => {
+  if (!selectedNode) return;
+  const data = selectedNode.userData.data;
+  const photos = data.photos || ["assets/images/timeline-01.jpg"];
+  const imgEl = document.getElementById('lightboxImg');
+  const captionEl = document.getElementById('lightboxCaption');
+  
+  imgEl.src = photos[0];
+  captionEl.textContent = `${data.year} — ${data.title}`;
+  
+  document.getElementById('lightboxModal').classList.add('active');
+});
+
+document.getElementById('lightboxClose').addEventListener('click', () => {
+  document.getElementById('lightboxModal').classList.remove('active');
+});
+
+// Sample Lesson Modal
+
+
+// Ask Prabhupada Search Submit
+document.getElementById('askForm').addEventListener('submit', (e) => {
+  e.preventDefault();
+  const q = document.getElementById('askInput').value.trim();
+  if (q) {
+    window.location.href = `ask.html?q=${encodeURIComponent(q)}`;
+  }
+});
+
+/* ------------------------------------------------------------
+   H. Render Loop & Animation Updates
+   ------------------------------------------------------------ */
+const clock = new THREE.Clock();
+
+function animate() {
+  requestAnimationFrame(animate);
+  const elapsedTime = clock.getElapsedTime();
+
+  // Slow Earth Auto-Rotation
+  earthMesh.rotation.y += 0.0015;
+
+  // Starfield subtle twinkling
+  starField.rotation.y = elapsedTime * 0.0005;
+
+  // Update OrbitControls
+  controls.update();
+
+  // Position HTML overlay node labels to match 3D node world positions projected to screen space
+  const tempV = new THREE.Vector3();
+  const worldPos = new THREE.Vector3();
+  const camPos = camera.position;
+
+  nodeMeshes.forEach(mesh => {
+    mesh.getWorldPosition(worldPos);
+
+    // Occlusion check against central Earth:
+    // Dot product between node world position vector and camera position vector
+    // Positive dot means node is on the front side facing camera; Negative means behind Earth
+    const dot = worldPos.dot(camPos);
+
+    tempV.copy(worldPos);
+    tempV.project(camera);
+
+    const yr = mesh.userData.year;
+    const labelEl = nodesMap[yr].labelEl;
+
+    // Node is visible only if in front of Earth (dot > 0) AND in camera frustum (tempV.z < 1)
+    if (dot > 0 && tempV.z < 1) {
+      const x = (tempV.x * 0.5 + 0.5) * window.innerWidth;
+      const y = (-tempV.y * 0.5 + 0.5) * window.innerHeight;
+      labelEl.style.display = 'flex';
+      labelEl.style.left = `${x}px`;
+      labelEl.style.top = `${y}px`;
+
+      // Title tag visibility: show ONLY for the node closest to the front of camera/screen or hovered/selected
+      const titleTag = labelEl.querySelector('.node-title-tag');
+      if (titleTag) {
+        const isHoveredOrSelected = (mesh === hoveredNode || mesh === selectedNode);
+        const isFrontFacing = (dot > (camPos.length() * ORBIT_RADIUS * 0.45));
+        titleTag.style.display = (isHoveredOrSelected || isFrontFacing) ? 'block' : 'none';
+      }
+    } else {
+      labelEl.style.display = 'none';
+    }
+  });
+
+  renderer.render(scene, camera);
+}
+
+animate();
+
+/* ------------------------------------------------------------
+   I. Window Resize Responsiveness
+   ------------------------------------------------------------ */
+window.addEventListener('resize', () => {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+});
+</script>
+<script src="js/audio.js"></script>
+</body>
+</html>

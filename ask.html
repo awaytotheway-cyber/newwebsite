@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ask the Archive — Srila Prabhupada</title>
+<meta name="description" content="Ask questions about the life of Srila Prabhupada, founder of ISKCON.">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body class="ask-page">
+
+<nav class="site-nav">
+  <div class="wrap">
+    <a href="index.html" class="brand">
+      <svg class="flame" viewBox="0 0 20 28" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M10 1C10 1 3 9 3 16C3 20.97 6.13 25 10 25C13.87 25 17 20.97 17 16C17 12.8 15.5 10.2 14 8C14.3 10 13.2 11.5 11.7 12C12.6 8.5 11.8 4.5 10 1Z"/>
+      </svg>
+      Srila Prabhupada Archive
+    </a>
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">☰</button>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="timeline.html">Timeline</a></li>
+      <li><a href="ask.html" aria-current="page">Ask the Archive</a></li>
+      <li>
+        <select class="human-voice-select" title="Choose Human Narration Voice" aria-label="Human Voice Selector"></select>
+      </li>
+    </ul>
+  </div>
+</nav>
+
+<header class="ask-hero">
+  <div class="wrap">
+    <div class="eyebrow-row">
+      <svg class="flame" viewBox="0 0 20 28" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M10 1C10 1 3 9 3 16C3 20.97 6.13 25 10 25C13.87 25 17 20.97 17 16C17 12.8 15.5 10.2 14 8C14.3 10 13.2 11.5 11.7 12C12.6 8.5 11.8 4.5 10 1Z"/>
+      </svg>
+      <span class="eyebrow">Ask the Archive</span>
+    </div>
+    <h1>What do you want to know?</h1>
+    <p>Ask about a year, a place, a teaching, or a moment — the archive answers from the full record of Prabhupada's life.</p>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="chat-shell">
+    <div class="chat-head">
+      <svg class="flame" viewBox="0 0 20 28" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M10 1C10 1 3 9 3 16C3 20.97 6.13 25 10 25C13.87 25 17 20.97 17 16C17 12.8 15.5 10.2 14 8C14.3 10 13.2 11.5 11.7 12C12.6 8.5 11.8 4.5 10 1Z"/>
+      </svg>
+      The Archive
+      <span class="status-dot" id="statusDot" title="Backend not connected yet"></span>
+    </div>
+
+    <div class="chat-log" id="chatLog">
+      <div class="msg from-archive">
+        <span class="label">The Archive</span>
+        <div class="bubble">
+          Ask me anything about Srila Prabhupada's life — a year, an event, a teaching.
+          I'll answer once a RAG backend is connected. Until then, I'll show you
+          exactly what I would have sent.
+        </div>
+        <button type="button" class="audio-narration-btn" style="margin-top:10px;" onclick="speakText(this.previousElementSibling.innerText, this)">
+          <span>🔊</span> <span class="audio-btn-label">Listen</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="chat-suggestions">
+      <button class="chip" type="button">What happened on the voyage to America?</button>
+      <button class="chip" type="button">Tell me about meeting his spiritual master</button>
+      <button class="chip" type="button">How did ISKCON begin?</button>
+    </div>
+
+    <div class="chat-input-row">
+      <textarea id="chatInput" rows="1" placeholder="Ask about Prabhupada's life…"></textarea>
+      <button id="chatSend" type="button">Ask</button>
+    </div>
+  </div>
+
+  <div class="integration-note">
+    <strong>Connecting your RAG pipeline —</strong> this page calls one function,
+    <code>queryArchive(question)</code>, in <code>js/ask.js</code>. Point
+    <code>window.SITE_CONFIG.RAG_API_ENDPOINT</code> in <code>js/config.js</code>
+    at your backend's query endpoint, and it will start returning real answers
+    instead of the placeholder message above. Keep your actual API keys and
+    vector DB credentials server-side, read from <code>.env</code> — never in
+    this frontend. See <code>.env.example</code> and README.md for the full setup.
+  </div>
+</div>
+
+<footer>
+  <div class="wrap">
+    <div class="brand-mini">
+      <svg class="flame" viewBox="0 0 20 28" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M10 1C10 1 3 9 3 16C3 20.97 6.13 25 10 25C13.87 25 17 20.97 17 16C17 12.8 15.5 10.2 14 8C14.3 10 13.2 11.5 11.7 12C12.6 8.5 11.8 4.5 10 1Z"/>
+      </svg>
+      The Srila Prabhupada Archive
+    </div>
+    <div class="brand-mini">Kept for those who still ask.</div>
+  </div>
+</footer>
+
+<script src="js/config.js"></script>
+<script src="js/audio.js"></script>
+<script src="js/main.js"></script>
+<script src="js/ask.js"></script>
+</body>
+</html>
