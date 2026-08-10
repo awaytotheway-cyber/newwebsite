@@ -20,32 +20,72 @@ async function queryArchive(question) {
       `in js/config.js to connect it.`;
   }
 
+  // 30-second timeout so the UI never hangs indefinitely
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 30000);
+
   try {
     const response = await fetch(endpoint, {
       method: "POST",
+      mode: "cors",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ question }),
+      signal: controller.signal,
     });
+
+    clearTimeout(timeout);
 
     if (!response.ok) {
       throw new Error(`Backend responded with ${response.status}`);
     }
 
-    // Try to parse as JSON first, fallback to plain text
-    const contentType = response.headers.get("content-type");
-    let answer;
-    
-    if (contentType && contentType.includes("application/json")) {
-      const data = await response.json();
-      answer = data.answer || data.output || data.message || JSON.stringify(data);
-    } else {
-      // Handle plain text response from n8n
-      answer = await response.text();
+    // --- Flexible response parsing for n8n webhook outputs ---
+    const contentType = response.headers.get("content-type") || "";
+
+    // If n8n returns plain text instead of JSON
+    if (!contentType.includes("application/json")) {
+      const text = (await response.text()).trim();
+      return text || "The archive didn't return an answer for that.";
     }
-    
-    return answer || "The archive didn't return an answer for that.";
+
+    let data = await response.json();
+
+    // n8n sometimes wraps the result in an array
+    if (Array.isArray(data)) {
+      data = data[0] || {};
+    }
+
+    // Try every common n8n output field in priority order
+    const answer =
+      data.answer ||          // custom Respond-to-Webhook body
+      data.output ||          // AI Agent / Chain node
+      data.text ||            // Chat model / LLM node
+      data.response ||        // generic alias
+      data.message ||         // some custom setups
+      data.result ||          // another common alias
+      (typeof data === "string" ? data : null);
+
+    if (answer) {
+      return typeof answer === "string" ? answer : JSON.stringify(answer);
+    }
+
+    // Last resort: if none of the known keys matched, stringify the whole object
+    console.warn("queryArchive: unexpected response shape", data);
+    return typeof data === "object"
+      ? JSON.stringify(data)
+      : "The archive didn't return an answer for that.";
+
   } catch (err) {
+    clearTimeout(timeout);
     console.error("queryArchive failed:", err);
+
+    if (err.name === "AbortError") {
+      return "The archive is taking too long to respond. Please try again in a moment.";
+    }
+    if (err.message && err.message.includes("Failed to fetch")) {
+      return "Could not reach the archive — this may be a network or CORS issue. " +
+        "Check the browser console for details.";
+    }
     return "The archive couldn't be reached just now. Please try again shortly.";
   }
 }
