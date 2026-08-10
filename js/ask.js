@@ -31,8 +31,19 @@ async function queryArchive(question) {
       throw new Error(`Backend responded with ${response.status}`);
     }
 
-    const data = await response.json();
-    return data.answer || "The archive didn't return an answer for that.";
+    // Try to parse as JSON first, fallback to plain text
+    const contentType = response.headers.get("content-type");
+    let answer;
+    
+    if (contentType && contentType.includes("application/json")) {
+      const data = await response.json();
+      answer = data.answer || data.output || data.message || JSON.stringify(data);
+    } else {
+      // Handle plain text response from n8n
+      answer = await response.text();
+    }
+    
+    return answer || "The archive didn't return an answer for that.";
   } catch (err) {
     console.error("queryArchive failed:", err);
     return "The archive couldn't be reached just now. Please try again shortly.";
