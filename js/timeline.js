@@ -1,467 +1,696 @@
 /* ============================================================
-   TIMELINE DATA — Srila Prabhupada (A.C. Bhaktivedanta Swami), 1896–1977
+   SRILA PRABHUPADA'S WORLD TRAVEL TIMELINE (1896–1977)
    ------------------------------------------------------------
-   Sourced and paraphrased from ISKCON's own archival timeline
-   (srimayapurdhama.com/srilaprabhupada/timeline) and standard
-   biographical references. Add photos into assets/images/ with
-   the filenames below, or add new entries the same way — the
-   page renders and animates itself from this array.
+   Single Source of Truth: 96 Sourced International Journeys (1965–1977)
+   plus Full 1896–1977 Life Record.
+   Calibrated for Golden Relief World Map (1000x588 resolution).
    ============================================================ */
 
-const TIMELINE_EVENTS = [
-  {
-    year: "1896",
-    title: "Born in Calcutta",
-    text: "Born Abhay Charan De on 1 September, in Tollygunge, Calcutta, to Gour Mohan De and Rajani Devi — a devout Vaishnava family that raised him around temple worship from early childhood.",
-  },
-  {
-    year: "1918",
-    title: "Marriage and Family Life",
-    text: "Married Radharani Devi. He would go on to work in the pharmaceutical business and raise a family, all the while carrying a private commitment to spiritual life.",
-    image: "timeline-01.jpg",
-  },
-  {
-    year: "1922",
-    title: "Meeting His Spiritual Master",
-    text: "Met Srila Bhaktisiddhanta Sarasvati Thakura in Calcutta. At their very first meeting, Bhaktisiddhanta asked him to bring the teachings of Krishna consciousness to the English-speaking world — an instruction that would define the rest of his life.",
-  },
-  {
-    year: "1933",
-    title: "Formal Initiation in Allahabad",
-    text: "Accepted formal initiation (diksha) from Bhaktisiddhanta Sarasvati, becoming his formal disciple over a decade after their first meeting.",
-  },
-  {
-    year: "1936",
-    title: "A Final Instruction",
-    text: "Weeks before his spiritual master's passing, he wrote asking how he could serve him. The reply, dated just before Bhaktisiddhanta's disappearance on 31 December, renewed the same charge given in 1922: preach in English.",
-  },
-  {
-    year: "1944",
-    title: "Founded Back to Godhead",
-    text: "Started the magazine Back to Godhead single-handedly — writing, editing, and publishing it himself in the years before he traveled to the West, to bring Krishna consciousness to English readers in print.",
-  },
-  {
-    year: "1953–56",
-    title: "The League of Devotees",
-    text: "Initiated his first disciple and incorporated the League of Devotees in Jhansi in 1953, then moved to Vrindavana in 1956 to continue his writing and preparation.",
-  },
-  {
-    year: "1959",
-    title: "Accepted the Renounced Order",
-    text: "Took sannyasa, the formal renounced order of life, in Mathura — after nearly a decade spent writing and preaching as a vanaprastha, having already stepped back from family and business life.",
-  },
-  {
-    year: "1962–65",
-    title: "Publishing Srimad-Bhagavatam",
-    text: "Published the first three volumes of Srimad-Bhagavatam, Canto One — translated and annotated single-handedly, funded initially by his own modest means and a small loan.",
-    image: "timeline-04.jpg",
-  },
-  {
-    year: "1965",
-    title: "The Voyage to America",
-    text: "At age 69, sailed from Calcutta to Boston aboard the cargo ship Jaladuta, arriving on 17 September with almost no money and no contacts — suffering two heart attacks during the crossing.",
-  },
-  {
-    year: "1966",
-    title: "A Storefront on Second Avenue",
-    text: "Rented a small storefront in New York's Lower East Side — formerly a shop called \"Matchless Gifts\" — and on 13 July incorporated the International Society for Krishna Consciousness (ISKCON). That October, he led the first outdoor kirtana in the West, at Tompkins Square Park.",
-    image: "timeline-05.jpg",
-  },
-  {
-    year: "1967",
-    title: "The First Ratha-Yatra in the West",
-    text: "Organized the first Ratha-yatra festival outside India, in San Francisco — a public procession and celebration that would become an annual tradition carried on by his students worldwide.",
-  },
-  {
-    year: "1968",
-    title: "Bhagavad-gita As It Is",
-    text: "Published Bhagavad-gita As It Is through Macmillan, bringing his translation and commentary on the Gita to a mainstream Western audience for the first time.",
-  },
-  {
-    year: "1970",
-    title: "Establishing the GBC",
-    text: "Founded the Governing Body Commission to oversee ISKCON's growing number of temples worldwide, formalizing how the movement he'd started from a single storefront would be managed as it expanded.",
-  },
-  {
-    year: "1972",
-    title: "The Bhaktivedanta Book Trust",
-    text: "Established the Bhaktivedanta Book Trust to fund and manage the printing of his books at scale, and performed the ground-breaking ceremony for the temple at Mayapur, birthplace of Sri Chaitanya Mahaprabhu.",
-  },
-  {
-    year: "1973",
-    title: "Bhaktivedanta Manor, England",
-    text: "Received a manor house in Hertfordshire, England — donated by former Beatle George Harrison, who had become a friend and supporter — which became Bhaktivedanta Manor, a center still active today.",
-    image: "timeline-06.jpg",
-  },
-  {
-    year: "1975",
-    title: "Caitanya-caritamrta and Krishna-Balarama Temple",
-    text: "Published Sri Caitanya-caritamrta, which he described as the postgraduate study of Krishna consciousness, and inaugurated the Krishna-Balarama Temple in Vrindavana.",
-  },
-  {
-    year: "1976–77",
-    title: "Final Years of Travel",
-    text: "Continued traveling and teaching across six continents even as his health declined, returning often to Mayapur — the movement he'd started alone in 1966 had grown to over 100 centers worldwide.",
-    image: "timeline-07.jpg",
-  },
-  {
-    year: "1977",
-    title: "Passing in Vrindavana",
-    text: "Passed away in Vrindavana on 14 November, at age 81, days after establishing a trust to preserve the holy places connected to Chaitanya Mahaprabhu. Asked once what would happen to his movement after his death, he had answered simply: he would live on through his books.",
-    image: "timeline-08.jpg",
-  },
+// 1. EXACT DATASET (Provided sourced records, 1965–1977)
+const TRAVEL_DATA = [
+  {"year": 1965, "date": "Aug 13", "place": "India"},
+  {"year": 1965, "date": "Sep 19", "place": "USA"},
+  {"year": 1967, "date": "Jul 25", "place": "India"},
+  {"year": 1967, "date": "Dec 14", "place": "USA"},
+  {"year": 1968, "date": "Jun 3", "place": "Canada"},
+  {"year": 1968, "date": "Aug 31", "place": "USA"},
+  {"year": 1968, "date": "Oct 23", "place": "Canada"},
+  {"year": 1968, "date": "Oct 27", "place": "USA"},
+  {"year": 1969, "date": "Mar 5", "place": "USA (Hawaii)"},
+  {"year": 1969, "date": "Aug 25", "place": "Germany"},
+  {"year": 1969, "date": "Sep 11", "place": "United Kingdom"},
+  {"year": 1969, "date": "Dec 21", "place": "USA"},
+  {"year": 1970, "date": "Aug 9", "place": "USA (Hawaii)"},
+  {"year": 1970, "date": "Aug 14", "place": "Japan"},
+  {"year": 1970, "date": "Aug 29", "place": "India"},
+  {"year": 1971, "date": "May 3", "place": "Malaysia"},
+  {"year": 1971, "date": "May 9", "place": "Australia"},
+  {"year": 1971, "date": "May 16", "place": "India"},
+  {"year": 1971, "date": "Jun 20", "place": "USSR"},
+  {"year": 1971, "date": "Jun 25", "place": "France"},
+  {"year": 1971, "date": "Jun 26", "place": "USA"},
+  {"year": 1971, "date": "Aug 3", "place": "United Kingdom"},
+  {"year": 1971, "date": "Sep 10", "place": "Kenya"},
+  {"year": 1971, "date": "Oct 19", "place": "India"},
+  {"year": 1972, "date": "Jan 24", "place": "Kenya"},
+  {"year": 1972, "date": "Feb 3", "place": "India"},
+  {"year": 1972, "date": "Mar 31", "place": "Australia"},
+  {"year": 1972, "date": "Apr 14", "place": "New Zealand"},
+  {"year": 1972, "date": "Apr 19", "place": "Hong Kong"},
+  {"year": 1972, "date": "Apr 20", "place": "Japan"},
+  {"year": 1972, "date": "May 6", "place": "USA (Hawaii)"},
+  {"year": 1972, "date": "Jun 2", "place": "Mexico"},
+  {"year": 1972, "date": "Jun 7", "place": "USA"},
+  {"year": 1972, "date": "Jul 11", "place": "United Kingdom"},
+  {"year": 1972, "date": "Jul 20", "place": "France"},
+  {"year": 1972, "date": "Jul 26", "place": "Netherlands"},
+  {"year": 1972, "date": "Jul 30", "place": "United Kingdom"},
+  {"year": 1972, "date": "Aug 10", "place": "USA"},
+  {"year": 1972, "date": "Oct 8", "place": "USA (Hawaii)"},
+  {"year": 1972, "date": "Oct 11", "place": "Philippines"},
+  {"year": 1972, "date": "Oct 14", "place": "India"},
+  {"year": 1973, "date": "Feb 8", "place": "Australia"},
+  {"year": 1973, "date": "Feb 19", "place": "New Zealand"},
+  {"year": 1973, "date": "Feb 25", "place": "Indonesia"},
+  {"year": 1973, "date": "Mar 2", "place": "India"},
+  {"year": 1973, "date": "Apr 2", "place": "Germany"},
+  {"year": 1973, "date": "Apr 5", "place": "USA"},
+  {"year": 1973, "date": "May 24", "place": "United Kingdom"},
+  {"year": 1973, "date": "Jun 1", "place": "India"},
+  {"year": 1973, "date": "Jul 7", "place": "United Kingdom"},
+  {"year": 1973, "date": "Aug 9", "place": "France"},
+  {"year": 1973, "date": "Aug 15", "place": "United Kingdom"},
+  {"year": 1973, "date": "Sep 5", "place": "Sweden"},
+  {"year": 1973, "date": "Sep 11", "place": "United Kingdom"},
+  {"year": 1973, "date": "Sep 15", "place": "India"},
+  {"year": 1973, "date": "Nov 23", "place": "United Kingdom"},
+  {"year": 1973, "date": "Nov 29", "place": "USA"},
+  {"year": 1974, "date": "Jan 14", "place": "USA (Hawaii)"},
+  {"year": 1974, "date": "Jan 28", "place": "Japan"},
+  {"year": 1974, "date": "Jan 31", "place": "Hong Kong"},
+  {"year": 1974, "date": "Feb 3", "place": "India"},
+  {"year": 1974, "date": "May 23", "place": "Italy"},
+  {"year": 1974, "date": "May 30", "place": "Switzerland"},
+  {"year": 1974, "date": "Jun 8", "place": "France"},
+  {"year": 1974, "date": "Jun 16", "place": "Germany"},
+  {"year": 1974, "date": "Jun 23", "place": "Australia"},
+  {"year": 1974, "date": "Jul 3", "place": "USA (Hawaii)"},
+  {"year": 1974, "date": "Jul 26", "place": "India"},
+  {"year": 1975, "date": "Jan 25", "place": "Hong Kong"},
+  {"year": 1975, "date": "Jan 27", "place": "Japan"},
+  {"year": 1975, "date": "Jan 29", "place": "USA (Hawaii)"},
+  {"year": 1975, "date": "Feb 11", "place": "Mexico"},
+  {"year": 1975, "date": "Feb 19", "place": "Venezuela"},
+  {"year": 1975, "date": "Feb 25", "place": "USA"},
+  {"year": 1975, "date": "Mar 8", "place": "United Kingdom"},
+  {"year": 1975, "date": "Mar 13", "place": "Iran"},
+  {"year": 1975, "date": "Mar 16", "place": "India"},
+  {"year": 1975, "date": "May 6", "place": "Australia"},
+  {"year": 1975, "date": "May 23", "place": "Fiji"},
+  {"year": 1975, "date": "May 25", "place": "USA (Hawaii)"},
+  {"year": 1975, "date": "Aug 7", "place": "Canada"},
+  {"year": 1975, "date": "Aug 11", "place": "France"},
+  {"year": 1975, "date": "Aug 12", "place": "United Kingdom"},
+  {"year": 1975, "date": "Aug 14", "place": "India"},
+  {"year": 1975, "date": "Oct 1", "place": "Mauritius"},
+  {"year": 1975, "date": "Oct 5", "place": "South Africa"},
+  {"year": 1975, "date": "Oct 24", "place": "Mauritius"},
+  {"year": 1975, "date": "Oct 26", "place": "Kenya"},
+  {"year": 1975, "date": "Nov 2", "place": "India"},
+  {"year": 1976, "date": "Apr 19", "place": "Australia"},
+  {"year": 1976, "date": "Apr 27", "place": "New Zealand"},
+  {"year": 1976, "date": "Apr 28", "place": "Fiji"},
+  {"year": 1976, "date": "May 3", "place": "USA (Hawaii)"},
+  {"year": 1976, "date": "Jun 16", "place": "Canada"},
+  {"year": 1976, "date": "Jun 21", "place": "USA"},
+  {"year": 1976, "date": "Jul 21", "place": "United Kingdom"},
+  {"year": 1976, "date": "Jul 28", "place": "France"},
+  {"year": 1976, "date": "Aug 7", "place": "Iran"},
+  {"year": 1976, "date": "Aug 13", "place": "India"},
+  {"year": 1977, "date": "Aug 27", "place": "United Kingdom"},
+  {"year": 1977, "date": "Sep 14", "place": "India"}
 ];
 
-const TIMELINE_3D = {
-  helixTurns: 1.65,
-  scrollVhPerEvent: 68,
-  radiusDesktop: 300,
-  radiusMobile: 180,
-  pitchDesktop: 440,
-  pitchMobile: 360,
-  smoothFactor: 0.1,
+// 2. CALIBRATED PIXEL COORDINATES (Matching 1000x588 Golden Relief Map)
+const LOCATION_COORDINATES = {
+  "India": { x: 715, y: 335, country: "India" },
+  "USA": { x: 235, y: 255, country: "USA" },
+  "USA (Hawaii)": { x: 70, y: 340, country: "USA" },
+  "Canada": { x: 230, y: 175, country: "Canada" },
+  "Germany": { x: 515, y: 195, country: "Germany" },
+  "United Kingdom": { x: 470, y: 180, country: "United Kingdom" },
+  "Japan": { x: 880, y: 265, country: "Japan" },
+  "Malaysia": { x: 775, y: 410, country: "Malaysia" },
+  "Australia": { x: 865, y: 475, country: "Australia" },
+  "USSR": { x: 600, y: 170, country: "USSR" },
+  "France": { x: 490, y: 215, country: "France" },
+  "Kenya": { x: 590, y: 435, country: "Kenya" },
+  "New Zealand": { x: 965, y: 525, country: "New Zealand" },
+  "Hong Kong": { x: 810, y: 330, country: "Hong Kong" },
+  "Mexico": { x: 210, y: 335, country: "Mexico" },
+  "Netherlands": { x: 498, y: 190, country: "Netherlands" },
+  "Philippines": { x: 830, y: 370, country: "Philippines" },
+  "Indonesia": { x: 810, y: 435, country: "Indonesia" },
+  "Italy": { x: 520, y: 230, country: "Italy" },
+  "Switzerland": { x: 510, y: 210, country: "Switzerland" },
+  "Venezuela": { x: 305, y: 385, country: "Venezuela" },
+  "Iran": { x: 635, y: 285, country: "Iran" },
+  "Fiji": { x: 980, y: 460, country: "Fiji" },
+  "Mauritius": { x: 650, y: 500, country: "Mauritius" },
+  "South Africa": { x: 555, y: 515, country: "South Africa" },
+  "Sweden": { x: 530, y: 140, country: "Sweden" }
 };
 
-function isSafeImageName(name) {
-  return typeof name === "string" && /^[\w.-]+\.(jpe?g|png|webp|gif)$/i.test(name);
+// Helper for location coordinates
+function getLocationCanvasPos(placeName) {
+  const loc = LOCATION_COORDINATES[placeName];
+  if (!loc) return { x: 500, y: 294 };
+  return { x: loc.x, y: loc.y };
 }
 
-function createFlameNode() {
-  const node = document.createElement("div");
-  node.className = "timeline-3d-node";
-  node.innerHTML =
-    '<svg class="flame" viewBox="0 0 20 28" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
-    '<path d="M10 1C10 1 3 9 3 16C3 20.97 6.13 25 10 25C13.87 25 17 20.97 17 16C17 12.8 15.5 10.2 14 8C14.3 10 13.2 11.5 11.7 12C12.6 8.5 11.8 4.5 10 1Z"/>' +
-    "</svg>";
-  return node;
+// 3. COUNTRY LIST & TOTAL TARGET VISIT COUNTS
+const COUNTRY_STATS_DATA = [
+  { key: "USA", name: "USA", total: 17, subtext: "incl. Hawaii (9)" },
+  { key: "India", name: "India", total: 16, subtext: "Motherland" },
+  { key: "United Kingdom", name: "United Kingdom", total: 13, subtext: "Bhaktivedanta Manor" },
+  { key: "Australia", name: "Australia", total: 6, subtext: "Sydney & Melbourne" },
+  { key: "France", name: "France", total: 6, subtext: "Paris Preaching" },
+  { key: "Canada", name: "Canada", total: 4, subtext: "Montreal & Vancouver" },
+  { key: "Hong Kong", name: "Hong Kong", total: 4, subtext: "Asia Mission" },
+  { key: "Japan", name: "Japan", total: 4, subtext: "Tokyo Center" },
+  { key: "Germany", name: "Germany", total: 3, subtext: "Hamburg & Frankfurt" },
+  { key: "Kenya", name: "Kenya", total: 3, subtext: "Nairobi Preaching" },
+  { key: "New Zealand", name: "New Zealand", total: 3, subtext: "Auckland" },
+  { key: "Fiji", name: "Fiji", total: 2, subtext: "Suva" },
+  { key: "Iran", name: "Iran", total: 2, subtext: "Tehran" },
+  { key: "Mauritius", name: "Mauritius", total: 2, subtext: "Port Louis" },
+  { key: "Mexico", name: "Mexico", total: 2, subtext: "Mexico City" },
+  { key: "Indonesia", name: "Indonesia", total: 1, subtext: "Jakarta" },
+  { key: "Italy", name: "Italy", total: 1, subtext: "Rome" },
+  { key: "Malaysia", name: "Malaysia", total: 1, subtext: "Kuala Lumpur" },
+  { key: "Netherlands", name: "Netherlands", total: 1, subtext: "Amsterdam" },
+  { key: "Philippines", name: "Philippines", total: 1, subtext: "Manila" },
+  { key: "South Africa", name: "South Africa", total: 1, subtext: "Durban" },
+  { key: "Sweden", name: "Sweden", total: 1, subtext: "Stockholm" },
+  { key: "Switzerland", name: "Switzerland", total: 1, subtext: "Geneva" },
+  { key: "USSR", name: "USSR", total: 1, subtext: "Moscow (1971)" },
+  { key: "Venezuela", name: "Venezuela", total: 1, subtext: "Caracas" }
+];
+
+// Historical milestones for landmark pre-travel years (1896–1964)
+const HISTORICAL_YEAR_MILESTONES = {
+  1896: "Born Abhay Charan De on September 1 in Tollygunge, Kolkata to Gour Mohan De and Rajani Devi.",
+  1918: "Married Radharani Devi in Kolkata. Raised a family while managing pharmaceutical endeavors.",
+  1922: "First met his spiritual master, Srila Bhaktisiddhanta Sarasvati Thakura, who asked him to preach in English.",
+  1933: "Received formal diksha initiation in Allahabad as Abhay Charanaravinda Das.",
+  1936: "Received final letter from Bhaktisiddhanta Sarasvati renewing the charge to preach in the West.",
+  1944: "Founded Back to Godhead magazine in Delhi/Kolkata, writing and printing it single-handedly.",
+  1948: "Formulated 'Mission 146' and appealed to national leaders to base governance on Bhagavad-gita.",
+  1953: "Founded the League of Devotees in Jhansi, initiating his first disciple, Acharya Prabhakar.",
+  1956: "Moved to Vrindavan, taking residence at the historic Sri Sri Radha-Damodara Temple.",
+  1959: "Accepted Sannyasa (renounced order of life) in Mathura, becoming A.C. Bhaktivedanta Swami.",
+  1962: "Published Volume 1 of Srimad-Bhagavatam First Canto from Delhi/Vrindavan.",
+  1964: "Completed three volumes of Srimad-Bhagavatam First Canto, preparing for his voyage to America."
+};
+
+// 4. ANIMATION STATE VARIABLES
+let currentIndex = 0;
+let isPlaying = false;
+let playbackSpeed = 1.0;
+let lastTimestamp = 0;
+let animFrameId = null;
+
+// DOM References
+let canvas, ctx;
+let playPauseBtn, playIcon, playText, replayBtn, scrubberSlider, scrubberCurrentDate;
+let timeReadout, bannerText, countryCountersGrid, lifeTimelineContainer;
+
+// 5. INITIALIZATION ON DOM CONTENT LOADED
+document.addEventListener("DOMContentLoaded", () => {
+  initDOMReferences();
+  initCountryCountersUI();
+  initLifeTimelineUI();
+  initCanvas();
+  bindEvents();
+
+  // Render initial state (Index 0)
+  updateState(0);
+});
+
+function initDOMReferences() {
+  canvas = document.getElementById("travelCanvas");
+  if (canvas) ctx = canvas.getContext("2d");
+
+  playPauseBtn = document.getElementById("playPauseBtn");
+  playIcon = document.getElementById("playIcon");
+  playText = document.getElementById("playText");
+  replayBtn = document.getElementById("replayBtn");
+  scrubberSlider = document.getElementById("timelineScrubber");
+  scrubberCurrentDate = document.getElementById("scrubberCurrentDate");
+  timeReadout = document.getElementById("timeReadout");
+  bannerText = document.getElementById("bannerText");
+  countryCountersGrid = document.getElementById("countryCountersGrid");
+  lifeTimelineContainer = document.getElementById("lifeTimelineContainer");
 }
 
-function createTimelineImage(imageName) {
-  const thumb = document.createElement("div");
-  thumb.className = "timeline-3d-thumb";
+// 6. COUNTRY COUNTERS UI GENERATION
+function initCountryCountersUI() {
+  if (!countryCountersGrid) return;
+  countryCountersGrid.innerHTML = "";
 
-  const img = document.createElement("img");
-  img.src = "assets/images/" + encodeURIComponent(imageName);
-  img.alt = "";
-
-  const fallback = document.createElement("div");
-  fallback.hidden = true;
-  fallback.className = "placeholder-mark";
-  fallback.innerHTML =
-    '<svg class="flame" viewBox="0 0 20 28" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
-    '<path d="M10 1C10 1 3 9 3 16C3 20.97 6.13 25 10 25C13.87 25 17 20.97 17 16C17 12.8 15.5 10.2 14 8C14.3 10 13.2 11.5 11.7 12C12.6 8.5 11.8 4.5 10 1Z"/>' +
-    '</svg>';
-
-  img.addEventListener("error", () => {
-    img.hidden = true;
-    fallback.hidden = false;
-  });
-
-  thumb.appendChild(img);
-  thumb.appendChild(fallback);
-  return thumb;
-}
-
-function createTimelineEntry(event, index) {
-  const article = document.createElement("article");
-  article.className = "timeline-3d-entry";
-  article.dataset.index = String(index);
-
-  article.appendChild(createFlameNode());
-
-  const year = document.createElement("div");
-  year.className = "timeline-3d-year";
-  year.textContent = event.year;
-  article.appendChild(year);
-
-  const title = document.createElement("h3");
-  title.textContent = event.title;
-  article.appendChild(title);
-
-  const text = document.createElement("p");
-  text.textContent = event.text;
-  article.appendChild(text);
-
-  const audioBtn = document.createElement("button");
-  audioBtn.type = "button";
-  audioBtn.className = "audio-narration-btn";
-  audioBtn.style.marginTop = "12px";
-  audioBtn.innerHTML = '<span>🔊</span> <span class="audio-btn-label">Listen</span>';
-  audioBtn.onclick = () => {
-    if (window.humanAudio) {
-      window.humanAudio.speak(`${event.year}. ${event.title}. ${event.text}`, audioBtn);
-    }
-  };
-  article.appendChild(audioBtn);
-
-  if (event.image && isSafeImageName(event.image)) {
-    article.appendChild(createTimelineImage(event.image));
-  }
-
-  return article;
-}
-
-function createFallbackEntry(event) {
-  const entry = document.createElement("div");
-  entry.className = "timeline-fallback-entry";
-
-  const node = document.createElement("div");
-  node.className = "timeline-fallback-node";
-  node.innerHTML =
-    '<svg class="flame" viewBox="0 0 20 28" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
-    '<path d="M10 1C10 1 3 9 3 16C3 20.97 6.13 25 10 25C13.87 25 17 20.97 17 16C17 12.8 15.5 10.2 14 8C14.3 10 13.2 11.5 11.7 12C12.6 8.5 11.8 4.5 10 1Z"/>' +
-    "</svg>";
-  entry.appendChild(node);
-
-  const year = document.createElement("div");
-  year.className = "timeline-fallback-year";
-  year.textContent = event.year;
-  entry.appendChild(year);
-
-  const title = document.createElement("h3");
-  title.textContent = event.title;
-  entry.appendChild(title);
-
-  const text = document.createElement("p");
-  text.textContent = event.text;
-  entry.appendChild(text);
-
-  if (event.image && isSafeImageName(event.image)) {
-    entry.appendChild(createTimelineImage(event.image));
-  }
-
-  return entry;
-}
-
-function getLayoutMetrics() {
-  const mobile = window.matchMedia("(max-width: 760px)").matches;
-  return {
-    radius: mobile ? TIMELINE_3D.radiusMobile : TIMELINE_3D.radiusDesktop,
-    pitch: mobile ? TIMELINE_3D.pitchMobile : TIMELINE_3D.pitchDesktop,
-  };
-}
-
-function positionHelixEntries(entries) {
-  const count = entries.length;
-  if (count === 0) return;
-
-  const { radius, pitch } = getLayoutMetrics();
-  const turns = TIMELINE_3D.helixTurns;
-  const denom = Math.max(count - 1, 1);
-
-  entries.forEach((entry, index) => {
-    const angle = (index / denom) * turns * Math.PI * 2;
-    const x = Math.sin(angle) * radius;
-    const z = Math.cos(angle) * radius;
-    const y = index * pitch;
-    const rotateY = -(angle * 180) / Math.PI;
-
-    entry.style.transform =
-      "translate3d(" + x + "px, " + y + "px, " + z + "px) rotateY(" + rotateY + "deg)";
+  COUNTRY_STATS_DATA.forEach((country) => {
+    const card = document.createElement("div");
+    card.className = "country-counter-card";
+    card.id = `counter-card-${country.key.replace(/[^a-zA-Z0-9]/g, "-")}`;
+    card.innerHTML = `
+      <div class="card-top">
+        <span class="country-name">${country.name}</span>
+        <span class="visit-tally" id="tally-${country.key.replace(/[^a-zA-Z0-9]/g, "-")}">0 / ${country.total}</span>
+      </div>
+      <div class="counter-progress-bar">
+        <div class="counter-progress-fill" id="fill-${country.key.replace(/[^a-zA-Z0-9]/g, "-")}" style="width: 0%"></div>
+      </div>
+      <div class="card-subtext">${country.subtext}</div>
+    `;
+    countryCountersGrid.appendChild(card);
   });
 }
 
-function renderTimeline3D() {
-  const section = document.getElementById("timeline3d");
-  const container = document.getElementById("entries");
-  const world = document.getElementById("timelineWorld");
-  if (!section || !container || !world) return;
+// 7. LIFE TIMELINE GRID (1896 – 1977)
+function initLifeTimelineUI() {
+  if (!lifeTimelineContainer) return;
+  lifeTimelineContainer.innerHTML = "";
 
-  section.classList.add("is-3d");
-  container.replaceChildren();
-
-  const fragment = document.createDocumentFragment();
-  TIMELINE_EVENTS.forEach((event, index) => {
-    fragment.appendChild(createTimelineEntry(event, index));
+  // Group events by year
+  const eventsByYear = {};
+  TRAVEL_DATA.forEach((evt) => {
+    if (!eventsByYear[evt.year]) eventsByYear[evt.year] = [];
+    eventsByYear[evt.year].push(evt);
   });
-  container.appendChild(fragment);
 
-  const scrollHeight = TIMELINE_EVENTS.length * TIMELINE_3D.scrollVhPerEvent + 100;
-  section.style.setProperty("--timeline-scroll-height", scrollHeight + "vh");
+  // Render every year from 1896 to 1977
+  for (let yr = 1896; yr <= 1977; yr++) {
+    const travels = eventsByYear[yr] || [];
+    const hasTravel = travels.length > 0;
+    const milestoneText = HISTORICAL_YEAR_MILESTONES[yr];
 
-  const entries = container.querySelectorAll(".timeline-3d-entry");
-  positionHelixEntries(entries);
+    const decadeClass = `${Math.floor(yr / 10)}0s`;
 
-  bindTimeline3DScroll(section, world, entries, () => positionHelixEntries(entries));
-}
+    const yearCard = document.createElement("div");
+    yearCard.className = `life-year-card ${hasTravel ? "has-travel" : "no-travel"}`;
+    yearCard.setAttribute("data-decade", decadeClass);
+    yearCard.setAttribute("data-year", yr);
 
-function renderTimelineFallback() {
-  const section = document.getElementById("timeline3d");
-  const container = document.getElementById("entries");
-  const viewport = document.getElementById("timelineViewport");
-  const hud = section ? section.querySelector(".timeline-3d-hud") : null;
-  if (!section || !container) return;
+    let badgeLabel = hasTravel ? `${travels.length} ${travels.length === 1 ? "Visit" : "Visits"}` : "No Travel";
+    if (yr === 1896) badgeLabel = "Birth in Kolkata";
+    if (yr === 1977) badgeLabel = "1977 Disappearance";
 
-  section.classList.add("is-fallback");
-  section.style.removeProperty("--timeline-scroll-height");
-  if (viewport) viewport.classList.add("timeline-fallback-viewport");
-  if (hud) hud.hidden = true;
-
-  container.className = "timeline-fallback-list";
-  container.replaceChildren();
-
-  const line = document.createElement("div");
-  line.className = "timeline-fallback-line";
-  line.setAttribute("aria-hidden", "true");
-  const progress = document.createElement("div");
-  progress.className = "timeline-fallback-progress";
-  progress.id = "timelineFallbackProgress";
-  line.appendChild(progress);
-  container.appendChild(line);
-
-  const list = document.createElement("div");
-  list.className = "timeline-fallback-entries";
-
-  const fragment = document.createDocumentFragment();
-  TIMELINE_EVENTS.forEach((event) => {
-    fragment.appendChild(createFallbackEntry(event));
-  });
-  list.appendChild(fragment);
-  container.appendChild(list);
-
-  observeFallbackEntries(list);
-  bindFallbackProgress(section, progress);
-}
-
-function bindTimeline3DScroll(section, world, entries, repositionEntries) {
-  const progressBar = document.getElementById("timelineProgressBar");
-  const progressWrap = document.getElementById("timelineProgressWrap");
-  const activeYear = document.getElementById("timelineActiveYear");
-  const hint = document.getElementById("timelineHint");
-  const count = entries.length;
-  let targetProgress = 0;
-  let smoothProgress = 0;
-  let lastActiveIndex = -1;
-  let rafId = 0;
-
-  document.documentElement.classList.add("timeline-scroll");
-
-  function readScrollProgress() {
-    const rect = section.getBoundingClientRect();
-    const scrollable = section.offsetHeight - window.innerHeight;
-    const scrolled = Math.min(Math.max(-rect.top, 0), Math.max(scrollable, 1));
-    return scrollable > 0 ? scrolled / scrollable : 0;
-  }
-
-  function applyScene(progress) {
-    const floatIndex = progress * Math.max(count - 1, 0);
-    const activeIndex = Math.round(floatIndex);
-    const { pitch } = getLayoutMetrics();
-    const lift = floatIndex * pitch;
-    const spin = progress * TIMELINE_3D.helixTurns * 360;
-    const focusY = window.innerHeight * 0.38;
-
-    world.style.transform =
-      "translate3d(0, " +
-      (focusY - lift) +
-      "px, -420px) rotateX(10deg) rotateY(" +
-      spin +
-      "deg)";
-
-    entries.forEach((entry, index) => {
-      const distance = Math.abs(index - floatIndex);
-      entry.style.opacity = String(Math.max(0.28, 1 - distance * 0.34));
-      entry.classList.toggle("is-active", distance < 0.5);
-    });
-
-    if (progressBar) {
-      progressBar.style.width = progress * 100 + "%";
-    }
-    if (progressWrap) {
-      progressWrap.setAttribute("aria-valuenow", String(Math.round(progress * 100)));
-    }
-    if (activeYear && TIMELINE_EVENTS[activeIndex] && activeIndex !== lastActiveIndex) {
-      lastActiveIndex = activeIndex;
-      activeYear.textContent =
-        TIMELINE_EVENTS[activeIndex].year + " — " + TIMELINE_EVENTS[activeIndex].title;
-    }
-    if (hint) {
-      hint.hidden = progress > 0.04;
-    }
-  }
-
-  function tick() {
-    const delta = targetProgress - smoothProgress;
-    if (Math.abs(delta) > 0.0004) {
-      smoothProgress += delta * TIMELINE_3D.smoothFactor;
+    let bodyHTML = "";
+    if (hasTravel) {
+      bodyHTML = `
+        <div class="travel-events-list">
+          ${travels
+            .map((t) => {
+              const globalIdx = TRAVEL_DATA.findIndex((x) => x.year === t.year && x.date === t.date && x.place === t.place);
+              return `
+                <div class="travel-event-item">
+                  <div class="event-date-pill">📅 ${t.date}, ${t.year}</div>
+                  <div class="event-place-name">📍 ${t.place}</div>
+                  <button type="button" class="jump-map-btn" onclick="jumpToTravelEvent(${globalIdx})">Focus on Map →</button>
+                </div>
+              `;
+            })
+            .join("")}
+        </div>
+      `;
     } else {
-      smoothProgress = targetProgress;
+      let note = "No international travel recorded for this year in this dataset.";
+      if (milestoneText) {
+        note = `<strong>Historical Milestone:</strong> ${milestoneText}<br><span class="no-travel-subnote">No international travel recorded for this year in this dataset.</span>`;
+      }
+      bodyHTML = `
+        <div class="no-travel-box">
+          <p class="no-travel-note">${note}</p>
+        </div>
+      `;
     }
-    applyScene(smoothProgress);
-    rafId = requestAnimationFrame(tick);
+
+    yearCard.innerHTML = `
+      <div class="life-year-header" onclick="toggleYearAccordion(this)">
+        <div class="year-number-group">
+          <span class="year-digit">${yr}</span>
+          <span class="year-badge ${hasTravel ? "badge-gold" : "badge-dim"}">${badgeLabel}</span>
+        </div>
+        <span class="accordion-chevron">▼</span>
+      </div>
+      <div class="life-year-body">
+        ${bodyHTML}
+      </div>
+    `;
+
+    lifeTimelineContainer.appendChild(yearCard);
   }
 
-  function onScroll() {
-    targetProgress = readScrollProgress();
-  }
+  // Decade Filter Event Listeners
+  const decadeTabs = document.querySelectorAll(".decade-tab");
+  decadeTabs.forEach((tab) => {
+    tab.addEventListener("click", () => {
+      decadeTabs.forEach((t) => t.classList.remove("active"));
+      tab.classList.add("active");
 
-  function onResize() {
-    repositionEntries();
-    targetProgress = readScrollProgress();
-    smoothProgress = targetProgress;
-    applyScene(smoothProgress);
-  }
+      const decade = tab.getAttribute("data-decade");
+      const cards = document.querySelectorAll(".life-year-card");
 
-  targetProgress = readScrollProgress();
-  smoothProgress = targetProgress;
-  applyScene(smoothProgress);
-  rafId = requestAnimationFrame(tick);
-
-  window.addEventListener("scroll", onScroll, { passive: true });
-  window.addEventListener("resize", onResize);
-
-  return () => {
-    cancelAnimationFrame(rafId);
-    window.removeEventListener("scroll", onScroll);
-    window.removeEventListener("resize", onResize);
-    document.documentElement.classList.remove("timeline-scroll");
-  };
+      cards.forEach((card) => {
+        if (decade === "all" || card.getAttribute("data-decade") === decade) {
+          card.style.display = "block";
+        } else {
+          card.style.display = "none";
+        }
+      });
+    });
+  });
 }
 
-function observeFallbackEntries(list) {
-  const entries = list.querySelectorAll(".timeline-fallback-entry");
-  const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+// Accordion Toggle
+window.toggleYearAccordion = function (headerEl) {
+  const card = headerEl.parentElement;
+  const isOpen = card.classList.contains("open");
 
-  if (prefersReducedMotion) {
-    entries.forEach((el) => el.classList.add("in-view"));
+  document.querySelectorAll(".life-year-card.open").forEach((c) => {
+    if (c !== card) c.classList.remove("open");
+  });
+
+  if (isOpen) {
+    card.classList.remove("open");
+  } else {
+    card.classList.add("open");
+  }
+};
+
+// Jump directly to event from life timeline
+window.jumpToTravelEvent = function (index) {
+  if (index < 0 || index >= TRAVEL_DATA.length) return;
+  pauseAnimation();
+  updateState(index);
+  document.getElementById("map-section").scrollIntoView({ behavior: "smooth" });
+};
+
+// 8. CANVAS SETUP & EVENT BINDING
+function initCanvas() {
+  if (!canvas) return;
+  resizeCanvas();
+  window.addEventListener("resize", resizeCanvas);
+}
+
+function resizeCanvas() {
+  if (!canvas) return;
+  // Resolution matched to image aspect ratio (1000x588)
+  canvas.width = 1000;
+  canvas.height = 588;
+  drawFrame();
+}
+
+function bindEvents() {
+  if (playPauseBtn) {
+    playPauseBtn.addEventListener("click", togglePlayPause);
+  }
+  if (replayBtn) {
+    replayBtn.addEventListener("click", () => {
+      pauseAnimation();
+      updateState(0);
+      playAnimation();
+    });
+  }
+  if (scrubberSlider) {
+    scrubberSlider.addEventListener("input", (e) => {
+      pauseAnimation();
+      const val = parseFloat(e.target.value);
+      updateState(val);
+    });
+  }
+
+  // Speed controls
+  const speedBtns = document.querySelectorAll(".speed-btn");
+  speedBtns.forEach((btn) => {
+    btn.addEventListener("click", () => {
+      speedBtns.forEach((b) => b.classList.remove("active"));
+      btn.classList.add("active");
+      playbackSpeed = parseFloat(btn.getAttribute("data-speed")) || 1.0;
+    });
+  });
+}
+
+// 9. ANIMATION LOOP & CONTROLS
+function togglePlayPause() {
+  if (isPlaying) {
+    pauseAnimation();
+  } else {
+    if (currentIndex >= TRAVEL_DATA.length - 1) {
+      currentIndex = 0; // restart if at end
+    }
+    playAnimation();
+  }
+}
+
+function playAnimation() {
+  if (isPlaying) return;
+  isPlaying = true;
+  if (playIcon) playIcon.textContent = "⏸";
+  if (playText) playText.textContent = "Pause Journey";
+  lastTimestamp = performance.now();
+  animFrameId = requestAnimationFrame(animationStep);
+}
+
+function pauseAnimation() {
+  isPlaying = false;
+  if (playIcon) playIcon.textContent = "▶";
+  if (playText) playText.textContent = "Play Journey";
+  if (animFrameId) {
+    cancelAnimationFrame(animFrameId);
+    animFrameId = null;
+  }
+}
+
+function animationStep(timestamp) {
+  if (!isPlaying) return;
+  const dt = (timestamp - lastTimestamp) / 1000;
+  lastTimestamp = timestamp;
+
+  // Progress index at speed rate
+  currentIndex += dt * 0.55 * playbackSpeed;
+
+  if (currentIndex >= TRAVEL_DATA.length - 1) {
+    currentIndex = TRAVEL_DATA.length - 1;
+    updateState(currentIndex);
+    pauseAnimation();
     return;
   }
 
-  const observer = new IntersectionObserver(
-    (obs) => {
-      obs.forEach((entry) => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add("in-view");
-        }
-      });
-    },
-    { threshold: 0.3 }
-  );
-
-  entries.forEach((el) => observer.observe(el));
+  updateState(currentIndex);
+  animFrameId = requestAnimationFrame(animationStep);
 }
 
-function bindFallbackProgress(section, progress) {
-  function updateProgress() {
-    if (!progress) return;
-    const rect = section.getBoundingClientRect();
-    const total = section.offsetHeight;
-    const scrolled = Math.min(Math.max(window.innerHeight - rect.top, 0), total);
-    const pct = total > 0 ? (scrolled / total) * 100 : 0;
-    progress.style.height = pct + "%";
+// 10. UPDATE STATE & RENDER
+function updateState(idxFloat) {
+  currentIndex = Math.max(0, Math.min(idxFloat, TRAVEL_DATA.length - 1));
+  const currentIntIdx = Math.floor(currentIndex);
+  const currentEvt = TRAVEL_DATA[currentIntIdx];
+
+  // Update Scrubber
+  if (scrubberSlider) scrubberSlider.value = currentIndex;
+  if (scrubberCurrentDate) scrubberCurrentDate.textContent = `${currentEvt.date}, ${currentEvt.year}`;
+
+  // Update Time Readout data-month and data-year
+  if (timeReadout) {
+    const monthStr = currentEvt.date.split(" ")[0].toUpperCase();
+    timeReadout.setAttribute("data-month", monthStr);
+    timeReadout.setAttribute("data-year", String(currentEvt.year));
   }
 
-  updateProgress();
-  window.addEventListener("scroll", updateProgress, { passive: true });
-  window.addEventListener("resize", updateProgress);
+  // Update Banner Text
+  if (bannerText) {
+    bannerText.textContent = `Journey ${currentIntIdx + 1} of 96 — ${currentEvt.date}, ${currentEvt.year}: ${currentEvt.place}`;
+  }
+
+  // Update Country Counters
+  updateCounters(currentIntIdx);
+
+  // Render Canvas
+  drawFrame();
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-  const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+// Update Live Country Visit Counters
+function updateCounters(upToIdx) {
+  const counts = {};
+  COUNTRY_STATS_DATA.forEach((c) => (counts[c.key] = 0));
 
-  if (prefersReducedMotion) {
-    renderTimelineFallback();
+  for (let i = 0; i <= upToIdx; i++) {
+    const place = TRAVEL_DATA[i].place;
+    const countryKey = LOCATION_COORDINATES[place]?.country || place;
+    if (counts[countryKey] !== undefined) {
+      counts[countryKey]++;
+    }
+  }
+
+  const activePlace = TRAVEL_DATA[upToIdx].place;
+  const activeCountry = LOCATION_COORDINATES[activePlace]?.country || activePlace;
+
+  COUNTRY_STATS_DATA.forEach((country) => {
+    const keySlug = country.key.replace(/[^a-zA-Z0-9]/g, "-");
+    const tallyEl = document.getElementById(`tally-${keySlug}`);
+    const fillEl = document.getElementById(`fill-${keySlug}`);
+    const cardEl = document.getElementById(`counter-card-${keySlug}`);
+
+    const count = counts[country.key] || 0;
+    if (tallyEl) tallyEl.textContent = `${count} / ${country.total}`;
+    if (fillEl) {
+      const pct = Math.min(100, (count / country.total) * 100);
+      fillEl.style.width = `${pct}%`;
+    }
+
+    if (cardEl) {
+      if (country.key === activeCountry && count > 0) {
+        cardEl.classList.add("active-pulse");
+      } else {
+        cardEl.classList.remove("active-pulse");
+      }
+    }
+  });
+}
+
+// 11. CANVAS DRAW FRAME
+function drawFrame() {
+  if (!ctx || !canvas) return;
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  const currentIntIdx = Math.floor(currentIndex);
+  const activeProgress = currentIndex - currentIntIdx;
+
+  // 1. Draw Flight Route Arcs for completed steps
+  for (let i = 1; i <= currentIntIdx; i++) {
+    const prevPlace = TRAVEL_DATA[i - 1].place;
+    const currPlace = TRAVEL_DATA[i].place;
+
+    const pt1 = getLocationCanvasPos(prevPlace);
+    const pt2 = getLocationCanvasPos(currPlace);
+
+    ctx.beginPath();
+    ctx.moveTo(pt1.x, pt1.y);
+
+    // Curved control point for arc
+    const midX = (pt1.x + pt2.x) / 2;
+    const dist = Math.hypot(pt2.x - pt1.x, pt2.y - pt1.y);
+    const midY = (pt1.y + pt2.y) / 2 - Math.min(90, dist * 0.25);
+
+    ctx.quadraticCurveTo(midX, midY, pt2.x, pt2.y);
+    ctx.strokeStyle = "rgba(255, 215, 0, 0.45)";
+    ctx.lineWidth = 1.8;
+    ctx.stroke();
+  }
+
+  // Draw active in-flight arc
+  if (currentIntIdx < TRAVEL_DATA.length - 1 && activeProgress > 0) {
+    const pt1 = getLocationCanvasPos(TRAVEL_DATA[currentIntIdx].place);
+    const pt2 = getLocationCanvasPos(TRAVEL_DATA[currentIntIdx + 1].place);
+
+    const midX = (pt1.x + pt2.x) / 2;
+    const dist = Math.hypot(pt2.x - pt1.x, pt2.y - pt1.y);
+    const midY = (pt1.y + pt2.y) / 2 - Math.min(90, dist * 0.25);
+
+    // Quadratic curve point interpolation
+    const t = activeProgress;
+    const currX = (1 - t) * (1 - t) * pt1.x + 2 * (1 - t) * t * midX + t * t * pt2.x;
+    const currY = (1 - t) * (1 - t) * pt1.y + 2 * (1 - t) * t * midY + t * t * pt2.y;
+
+    ctx.beginPath();
+    ctx.moveTo(pt1.x, pt1.y);
+    ctx.quadraticCurveTo(midX, midY, currX, currY);
+    ctx.strokeStyle = "rgba(255, 235, 150, 0.95)";
+    ctx.lineWidth = 2.5;
+    ctx.setLineDash([5, 5]);
+    ctx.stroke();
+    ctx.setLineDash([]); // reset
+
+    // Moving golden spark dot
+    ctx.beginPath();
+    ctx.arc(currX, currY, 5, 0, Math.PI * 2);
+    ctx.fillStyle = "#ffffff";
+    ctx.shadowColor = "#ffd700";
+    ctx.shadowBlur = 14;
+    ctx.fill();
+    ctx.shadowBlur = 0;
+  }
+
+  // 2. Draw Settled Pins for visited locations up to currentIntIdx
+  const visitedPlacesSet = new Set();
+  for (let i = 0; i <= currentIntIdx; i++) {
+    visitedPlacesSet.add(TRAVEL_DATA[i].place);
+  }
+
+  visitedPlacesSet.forEach((placeKey) => {
+    const pt = getLocationCanvasPos(placeKey);
+
+    // Settled pin dot with outer glow ring
+    ctx.beginPath();
+    ctx.arc(pt.x, pt.y, 4.5, 0, Math.PI * 2);
+    ctx.fillStyle = "#ffd700";
+    ctx.shadowColor = "rgba(255, 215, 0, 0.6)";
+    ctx.shadowBlur = 8;
+    ctx.fill();
+    ctx.shadowBlur = 0;
+    ctx.strokeStyle = "#100f18";
+    ctx.lineWidth = 1.2;
+    ctx.stroke();
+  });
+
+  // 3. Draw Active Location Marker ("Detonation" & Pulsing Ring)
+  const activeEvt = TRAVEL_DATA[currentIntIdx];
+  const pt = getLocationCanvasPos(activeEvt.place);
+
+  // Pulsing outer ring
+  const pulseRadius = 7 + Math.sin(performance.now() * 0.008) * 7;
+  ctx.beginPath();
+  ctx.arc(pt.x, pt.y, Math.max(5, pulseRadius + 6), 0, Math.PI * 2);
+  ctx.strokeStyle = "rgba(255, 235, 150, 0.9)";
+  ctx.lineWidth = 2.2;
+  ctx.stroke();
+
+  // Inner glowing core
+  ctx.beginPath();
+  ctx.arc(pt.x, pt.y, 7, 0, Math.PI * 2);
+  ctx.fillStyle = "#ffffff";
+  ctx.shadowColor = "#ffd700";
+  ctx.shadowBlur = 18;
+  ctx.fill();
+  ctx.shadowBlur = 0;
+
+  // Floating Tooltip Tag (Place + Date)
+  drawTooltipTag(ctx, pt.x, pt.y, `${activeEvt.place} (${activeEvt.date})`);
+}
+
+// Draw Floating Tooltip Label on Map Canvas
+function drawTooltipTag(ctx, x, y, text) {
+  ctx.font = "600 11.5px 'IBM Plex Mono', monospace";
+  const textWidth = ctx.measureText(text).width;
+  const paddingX = 10;
+  const paddingY = 6;
+  const boxWidth = textWidth + paddingX * 2;
+  const boxHeight = 24;
+
+  // Offset box above marker
+  let boxX = x - boxWidth / 2;
+  let boxY = y - 38;
+
+  // Boundary clamping
+  boxX = Math.max(10, Math.min(boxX, canvas.width - boxWidth - 10));
+  boxY = Math.max(10, boxY);
+
+  // Background Box (Dark parchment with brass border)
+  ctx.beginPath();
+  if (ctx.roundRect) {
+    ctx.roundRect(boxX, boxY, boxWidth, boxHeight, 6);
   } else {
-    renderTimeline3D();
+    ctx.rect(boxX, boxY, boxWidth, boxHeight);
   }
-});
+  ctx.fillStyle = "rgba(16, 14, 26, 0.94)";
+  ctx.fill();
+  ctx.strokeStyle = "rgba(255, 215, 0, 0.85)";
+  ctx.lineWidth = 1.2;
+  ctx.stroke();
+
+  // Pointer Stem
+  ctx.beginPath();
+  ctx.moveTo(x, y - 6);
+  ctx.lineTo(x - 4, boxY + boxHeight);
+  ctx.lineTo(x + 4, boxY + boxHeight);
+  ctx.closePath();
+  ctx.fillStyle = "rgba(255, 215, 0, 0.85)";
+  ctx.fill();
+
+  // Text
+  ctx.fillStyle = "#ffe699";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText(text, boxX + boxWidth / 2, boxY + boxHeight / 2 + 1);
+}
