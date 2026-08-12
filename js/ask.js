@@ -15,9 +15,7 @@ async function queryArchive(question) {
   const endpoint = window.SITE_CONFIG && window.SITE_CONFIG.RAG_API_ENDPOINT;
 
   if (!endpoint) {
-    return `No backend is connected yet. When one is, I'll answer "${question}" ` +
-      `using the RAG pipeline over Srila Prabhupada's life record. Set RAG_API_ENDPOINT ` +
-      `in js/config.js to connect it.`;
+    return `The archive is not yet connected. Once a backend is configured, I will answer "${question}" using the full record of Srila Prabhupada's life.`;
   }
 
   // 30-second timeout so the UI never hangs indefinitely
@@ -94,15 +92,19 @@ function appendMessage(role, text, pending = false) {
   const log = document.getElementById("chatLog");
   const msg = document.createElement("div");
   msg.className = `msg from-${role}${pending ? " pending" : ""}`;
-  
+
   let audioHtml = "";
   if (role === "archive" && !pending) {
     audioHtml = `<button type="button" class="audio-narration-btn" style="margin-top:10px;" onclick="speakText(this.previousElementSibling.innerText, this)"><span>🔊</span> <span class="audio-btn-label">Listen</span></button>`;
   }
 
+  const bubbleContent = pending
+    ? `<div class="loader-spinner"><div class="inner one"></div><div class="inner two"></div><div class="inner three"></div></div>`
+    : escapeHtml(text);
+
   msg.innerHTML = `
     <span class="label">${role === "visitor" ? "You" : "The Archive"}</span>
-    <div class="bubble">${escapeHtml(text)}</div>
+    <div class="bubble${pending ? ' bubble--loading' : ''}">${bubbleContent}</div>
     ${audioHtml}
   `;
   log.appendChild(msg);
@@ -127,7 +129,7 @@ async function handleAsk() {
   input.style.height = "auto";
   sendBtn.disabled = true;
 
-  const pendingMsg = appendMessage("archive", "Consulting the archive…", true);
+  const pendingMsg = appendMessage("archive", "", true);
 
   const answer = await queryArchive(question);
 
@@ -140,14 +142,6 @@ async function handleAsk() {
 document.addEventListener("DOMContentLoaded", () => {
   const input = document.getElementById("chatInput");
   const sendBtn = document.getElementById("chatSend");
-  const statusDot = document.getElementById("statusDot");
-  const chips = document.querySelectorAll(".chip");
-
-  const connected = Boolean(window.SITE_CONFIG && window.SITE_CONFIG.RAG_API_ENDPOINT);
-  if (statusDot) {
-    statusDot.classList.toggle("ready", connected);
-    statusDot.title = connected ? "Backend connected" : "Backend not connected yet";
-  }
 
   sendBtn.addEventListener("click", handleAsk);
   input.addEventListener("keydown", (e) => {
@@ -159,12 +153,5 @@ document.addEventListener("DOMContentLoaded", () => {
   input.addEventListener("input", () => {
     input.style.height = "auto";
     input.style.height = Math.min(input.scrollHeight, 140) + "px";
-  });
-
-  chips.forEach((chip) => {
-    chip.addEventListener("click", () => {
-      input.value = chip.textContent;
-      handleAsk();
-    });
   });
 });
