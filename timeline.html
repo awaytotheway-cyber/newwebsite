@@ -56,9 +56,11 @@ body, html {
   left: 0;
   right: 0;
   z-index: 100;
-  background: rgba(10, 10, 26, 0.7);
-  backdrop-filter: blur(12px);
+  background: linear-gradient(135deg, rgba(10, 10, 26, 0.8), rgba(15, 15, 35, 0.75));
+  backdrop-filter: blur(16px) saturate(1.4);
+  -webkit-backdrop-filter: blur(16px) saturate(1.4);
   border-bottom: 1px solid rgba(255, 215, 0, 0.15);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.4);
 }
 
 /* Canvas Container */
@@ -106,8 +108,8 @@ body, html {
 }
 
 .btn-hud {
-  background: rgba(255, 215, 0, 0.12);
-  border: 1px solid rgba(255, 215, 0, 0.4);
+  background: linear-gradient(145deg, rgba(25, 22, 40, 0.92), rgba(15, 14, 28, 0.96));
+  border: none;
   color: var(--gold-primary);
   padding: 10px 18px;
   border-radius: 30px;
@@ -116,18 +118,30 @@ body, html {
   font-weight: 700;
   letter-spacing: 1px;
   cursor: pointer;
-  backdrop-filter: blur(12px);
-  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
   display: inline-flex;
   align-items: center;
   gap: 8px;
+  box-shadow:
+    5px 5px 12px rgba(0, 0, 0, 0.6),
+    -2px -2px 8px rgba(255, 215, 0, 0.05),
+    inset 0 1px 0 rgba(255, 255, 255, 0.07),
+    inset 0 -1px 0 rgba(0,0,0,0.2);
+  transition: all 0.25s ease;
 }
 
 .btn-hud:hover {
-  background: var(--gold-primary);
-  color: #000;
-  box-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
+  color: var(--gold-primary);
   transform: translateY(-2px);
+  box-shadow:
+    7px 9px 18px rgba(0, 0, 0, 0.65),
+    -2px -2px 10px rgba(255, 215, 0, 0.07),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    0 0 18px rgba(255, 215, 0, 0.2);
+}
+
+.btn-hud:active {
+  transform: translateY(1px);
+  box-shadow: 2px 2px 6px rgba(0,0,0,0.6), inset 0 2px 5px rgba(0,0,0,0.35);
 }
 
 .year-select-dropdown {
@@ -163,19 +177,23 @@ body, html {
   align-items: center;
   gap: 12px;
   margin-bottom: 8px;
+  padding: 0 12px;
 }
 
 .ask-prabhupada-bar {
   display: flex;
   align-items: center;
-  background: rgba(15, 15, 35, 0.85);
-  backdrop-filter: blur(16px);
+  background: linear-gradient(135deg, rgba(15, 15, 35, 0.85), rgba(10, 10, 30, 0.8));
+  background-size: 200% 200%;
+  animation: liquidShimmer 10s ease infinite;
+  backdrop-filter: blur(20px) saturate(1.4);
+  -webkit-backdrop-filter: blur(20px) saturate(1.4);
   border: 1px solid rgba(255, 215, 0, 0.3);
   border-radius: 35px;
   padding: 6px 8px 6px 20px;
   width: 100%;
   max-width: 520px;
-  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.6);
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.06);
 }
 
 .ask-prabhupada-bar input {
@@ -193,20 +211,34 @@ body, html {
 }
 
 .ask-prabhupada-bar button {
-  background: linear-gradient(135deg, var(--gold-primary), var(--gold-amber));
+  background: linear-gradient(145deg, #e6c785, #c9a153);
   border: none;
   color: #0a0a1a;
   font-weight: 700;
   font-size: 0.82rem;
-  padding: 8px 16px;
+  padding: 8px 18px;
   border-radius: 25px;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.25s ease;
+  box-shadow:
+    3px 3px 8px rgba(0,0,0,0.5),
+    -1px -1px 5px rgba(255, 215, 0, 0.06),
+    inset 0 1px 0 rgba(255,255,255,0.2),
+    inset 0 -1px 0 rgba(0,0,0,0.15);
 }
 
 .ask-prabhupada-bar button:hover {
-  box-shadow: 0 0 16px rgba(255, 215, 0, 0.8);
-  transform: scale(1.04);
+  transform: translateY(-1px);
+  box-shadow:
+    5px 5px 12px rgba(0,0,0,0.55),
+    -1px -1px 6px rgba(255, 215, 0, 0.08),
+    inset 0 1px 0 rgba(255,255,255,0.25),
+    0 0 12px rgba(255, 215, 0, 0.3);
+}
+
+.ask-prabhupada-bar button:active {
+  transform: translateY(1px);
+  box-shadow: 1px 1px 4px rgba(0,0,0,0.55), inset 0 2px 4px rgba(0,0,0,0.2);
 }
 
 .nav-instructions {
@@ -214,10 +246,12 @@ body, html {
   color: rgba(255, 255, 255, 0.65);
   letter-spacing: 1.2px;
   text-transform: uppercase;
-  background: rgba(0, 0, 0, 0.4);
+  background: linear-gradient(135deg, rgba(0, 0, 0, 0.5), rgba(10, 10, 30, 0.45));
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   padding: 6px 16px;
   border-radius: 20px;
-  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 215, 0, 0.1);
 }
 
 /* Hover HUD Badge */
@@ -347,9 +381,9 @@ body, html {
   position: absolute;
   top: 20px;
   right: 20px;
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  color: #FFF;
+  background: linear-gradient(145deg, rgba(30, 28, 45, 0.9), rgba(18, 16, 30, 0.95));
+  border: none;
+  color: rgba(255,255,255,0.85);
   width: 34px;
   height: 34px;
   border-radius: 50%;
@@ -359,12 +393,23 @@ body, html {
   align-items: center;
   justify-content: center;
   transition: all 0.2s ease;
+  box-shadow:
+    3px 3px 8px rgba(0, 0, 0, 0.55),
+    -1px -1px 5px rgba(255, 255, 255, 0.04),
+    inset 0 1px 0 rgba(255,255,255,0.08);
 }
 
 .btn-card-close:hover {
-  background: var(--gold-primary);
-  color: #000;
-  transform: rotate(90deg);
+  color: #FFF;
+  transform: rotate(90deg) scale(1.08);
+  box-shadow:
+    4px 4px 10px rgba(0, 0, 0, 0.6),
+    0 0 10px rgba(255, 215, 0, 0.2);
+}
+
+.btn-card-close:active {
+  transform: rotate(90deg) scale(0.95);
+  box-shadow: 1px 1px 4px rgba(0,0,0,0.6), inset 0 2px 4px rgba(0,0,0,0.3);
 }
 
 .card-year-badge {
@@ -461,8 +506,8 @@ body, html {
 
 .btn-card-action {
   flex: 1;
-  background: rgba(255, 215, 0, 0.1);
-  border: 1px solid rgba(255, 215, 0, 0.4);
+  background: linear-gradient(145deg, rgba(25, 22, 42, 0.92), rgba(14, 13, 28, 0.96));
+  border: none;
   color: var(--gold-primary);
   padding: 12px;
   border-radius: 14px;
@@ -473,13 +518,26 @@ body, html {
   align-items: center;
   justify-content: center;
   gap: 8px;
-  transition: all 0.3s ease;
+  transition: all 0.25s ease;
+  box-shadow:
+    4px 4px 10px rgba(0, 0, 0, 0.55),
+    -2px -2px 6px rgba(255, 215, 0, 0.04),
+    inset 0 1px 0 rgba(255,255,255,0.07);
 }
 
 .btn-card-action:hover {
-  background: var(--gold-primary);
-  color: #0a0a1a;
-  box-shadow: 0 0 16px rgba(255, 215, 0, 0.5);
+  color: var(--gold-primary);
+  transform: translateY(-2px);
+  box-shadow:
+    6px 7px 16px rgba(0, 0, 0, 0.6),
+    -2px -2px 8px rgba(255, 215, 0, 0.06),
+    inset 0 1px 0 rgba(255,255,255,0.1),
+    0 0 14px rgba(255, 215, 0, 0.2);
+}
+
+.btn-card-action:active {
+  transform: translateY(1px);
+  box-shadow: 2px 2px 6px rgba(0,0,0,0.55), inset 0 2px 4px rgba(0,0,0,0.3);
 }
 
 /* Lightbox Modal */
@@ -552,6 +610,106 @@ body, html {
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+@keyframes liquidShimmer {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Mobile Timeline Fixes */
+@media (max-width: 768px) {
+  .site-nav .nav-links {
+    position: fixed;
+    inset: 0;
+    background: linear-gradient(160deg, rgba(10, 10, 26, 0.97), rgba(16, 15, 24, 0.95));
+    backdrop-filter: blur(24px) saturate(1.5);
+    -webkit-backdrop-filter: blur(24px) saturate(1.5);
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 32px;
+    font-size: 16px;
+    font-weight: 500;
+    z-index: 9999;
+    transform: translateX(100%);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.35s ease, transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .site-nav .nav-links.open {
+    opacity: 1;
+    transform: translateX(0);
+    pointer-events: auto;
+  }
+  .site-nav .nav-toggle {
+    display: block;
+    background: linear-gradient(145deg, rgba(25, 22, 40, 0.9), rgba(15, 14, 28, 0.95));
+    border: none;
+    color: var(--gold-primary);
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    font-size: 20px;
+    cursor: pointer;
+    z-index: 10000;
+    position: relative;
+    box-shadow:
+      4px 4px 10px rgba(0, 0, 0, 0.6),
+      -2px -2px 6px rgba(255, 215, 0, 0.05),
+      inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    transition: all 0.2s ease;
+  }
+  .site-nav .nav-toggle:hover {
+    box-shadow:
+      6px 6px 14px rgba(0, 0, 0, 0.65),
+      0 0 12px rgba(255, 215, 0, 0.18);
+  }
+  .overlay-controls {
+    top: 80px;
+    right: 12px;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .year-select-dropdown {
+    min-width: 180px;
+    font-size: 0.78rem;
+    padding: 8px 12px;
+  }
+  .active-hover-badge {
+    bottom: 140px;
+    left: 12px;
+    right: 12px;
+  }
+  .ask-prabhupada-bar {
+    max-width: 100%;
+    padding: 4px 6px 4px 14px;
+  }
+  .ask-prabhupada-bar input {
+    font-size: 0.82rem;
+  }
+  .nav-instructions {
+    font-size: 0.7rem;
+    letter-spacing: 0.8px;
+  }
+  .timeline-info-card {
+    width: 95%;
+    max-height: 80vh;
+    border-radius: 18px;
+  }
+  .card-header {
+    padding: 18px 20px 14px 20px;
+  }
+  .card-title {
+    font-size: 1.3rem;
+  }
+  .card-body {
+    padding: 18px 20px;
+  }
+  .card-footer {
+    padding: 14px 20px 18px 20px;
   }
 }
 </style>
@@ -1083,13 +1241,14 @@ function playChime(freq = 523.25, duration = 0.8) {
    ============================================================ */
 const container = document.getElementById('canvas-container');
 const labelsContainer = document.getElementById('node-labels-container');
+const isMobile = window.innerWidth < 768;
 
 // Scene, Camera, Renderer
 const scene = new THREE.Scene();
 scene.fog = new THREE.FogExp2(0x0a0a1a, 0.025);
 
 const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
-camera.position.set(0, 4, 14);
+camera.position.set(0, isMobile ? 3 : 4, isMobile ? 20 : 14);
 
 const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
 renderer.setSize(window.innerWidth, window.innerHeight);
@@ -1102,9 +1261,15 @@ container.appendChild(renderer.domElement);
 const controls = new THREE.OrbitControls(camera, renderer.domElement);
 controls.enableDamping = true;
 controls.dampingFactor = 0.05;
-controls.maxDistance = 25;
-controls.minDistance = 5;
+controls.maxDistance = isMobile ? 28 : 25;
+controls.minDistance = isMobile ? 8 : 5;
 controls.enablePan = false;
+controls.minPolarAngle = Math.PI / 2;
+controls.maxPolarAngle = Math.PI / 2;
+if (isMobile) {
+  controls.enableZoom = false;
+  controls.rotateSpeed = 0.5;
+}
 
 // Lighting
 const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
@@ -1121,9 +1286,9 @@ scene.add(blueGlowLight);
 /* ------------------------------------------------------------
    A. Central Earth Sphere & Procedural Texture Fallback
    ------------------------------------------------------------ */
-const EARTH_RADIUS = 2.4;
+const EARTH_RADIUS = isMobile ? 1.6 : 2.4;
 const earthGroup = new THREE.Group();
-earthGroup.rotation.z = THREE.MathUtils.degToRad(23.5); // Earth axial tilt
+earthGroup.rotation.z = 0; // Removed tilt to keep ring visible on all screens
 scene.add(earthGroup);
 
 // Generate procedural fallback canvas texture for Earth
@@ -1278,8 +1443,8 @@ scene.add(starField);
 /* ------------------------------------------------------------
    C. Tilted Timeline Orbit Ring & Nodes
    ------------------------------------------------------------ */
-const ORBIT_RADIUS = 6.2;
-const ORBIT_TILT_X = THREE.MathUtils.degToRad(35); // 35 degree tilt
+const ORBIT_RADIUS = isMobile ? 4.0 : 6.2;
+const ORBIT_TILT_X = THREE.MathUtils.degToRad(0); // Horizontal ring
 
 // Golden Orbit Ring Group
 const orbitGroup = new THREE.Group();
@@ -1544,7 +1709,7 @@ function closeCard() {
   });
 
   // Reset Camera to default view
-  gsap.to(camera.position, { x: 0, y: 4, z: 14, duration: 1.2, ease: 'power3.inOut' });
+  gsap.to(camera.position, { x: 0, y: isMobile ? 3 : 4, z: isMobile ? 20 : 14, duration: 1.2, ease: 'power3.inOut' });
   gsap.to(controls.target, { x: 0, y: 0, z: 0, duration: 1.2, ease: 'power3.inOut', onUpdate: () => controls.update() });
 }
 
@@ -1699,8 +1864,10 @@ window.addEventListener('resize', () => {
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
   renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 });
 </script>
 <script src="js/audio.js"></script>
+<script src="js/main.js"></script>
 </body>
 </html>
