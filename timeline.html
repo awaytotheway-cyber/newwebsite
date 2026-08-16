@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+<title>Srila Prabhupada's World Travel Timeline — A Living Archive</title>
+<meta name="description" content="An interactive world map and life timeline chronicling the 12 global circuits and 25 country visits of Srila Prabhupada, founder of ISKCON (1896–1977).">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body class="travel-timeline-page">
+
+<!-- ============ NAVIGATION HEADER ============ -->
+<nav class="site-nav">
+  <div class="wrap">
+    <a href="index.html" class="brand">
+      <img src="assets/images/logo-emblem.png" alt="Srila Prabhupada Logo" class="site-logo-icon">
+      <img src="assets/images/logo-text-header.png" alt="श्रील प्रभुपाद Srila Prabhupad" class="site-logo-text-img">
+    </a>
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">☰</button>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="timeline.html" aria-current="page">Timeline</a></li>
+      <li><a href="ask.html">Ask the Archive</a></li>
+      <li>
+        <select class="human-voice-select" title="Choose Human Narration Voice" aria-label="Human Voice Selector"></select>
+      </li>
+      <li class="translate-nav-item">
+        <div class="translate-widget" id="translateWidget">
+          <button type="button" class="translate-btn" id="translateBtn" aria-label="Select Language">
+            <span class="globe-icon">🌐</span>
+            <span id="currentLangLabel">Translate</span>
+            <span class="arrow-down">▾</span>
+          </button>
+          <div class="translate-dropdown" id="translateDropdown">
+            <div class="translate-quick-title">Quick Select Language</div>
+            <div class="translate-quick-btns">
+              <button type="button" class="lang-pill active" data-lang="en">English</button>
+              <button type="button" class="lang-pill" data-lang="hi">हिन्दी</button>
+              <button type="button" class="lang-pill" data-lang="bn">বাংলা</button>
+              <button type="button" class="lang-pill" data-lang="es">Español</button>
+              <button type="button" class="lang-pill" data-lang="fr">Français</button>
+              <button type="button" class="lang-pill" data-lang="de">Deutsch</button>
+              <button type="button" class="lang-pill" data-lang="ru">Русский</button>
+              <button type="button" class="lang-pill" data-lang="ja">日本語</button>
+            </div>
+            <div class="translate-select-wrap">
+              <label for="allLanguagesSelect">All Languages:</label>
+              <select id="allLanguagesSelect" class="lang-select">
+                <option value="">Choose Language...</option>
+                <option value="en">English</option>
+                <option value="hi">Hindi (हिन्दी)</option>
+                <option value="bn">Bengali (বাংলা)</option>
+                <option value="gu">Gujarati (ગુજરાતી)</option>
+                <option value="mr">Marathi (मराठी)</option>
+                <option value="ta">Tamil (தமிழ்)</option>
+                <option value="te">Telugu (తెలుగు)</option>
+                <option value="kn">Kannada (ಕನ್ನಡ)</option>
+                <option value="pa">Punjabi (ਪੰਜਾਬੀ)</option>
+                <option value="es">Spanish (Español)</option>
+                <option value="fr">French (Français)</option>
+                <option value="de">German (Deutsch)</option>
+                <option value="ru">Russian (Русский)</option>
+                <option value="zh-CN">Chinese (中文)</option>
+                <option value="ja">Japanese (日本語)</option>
+                <option value="pt">Portuguese (Português)</option>
+                <option value="it">Italian (Italiano)</option>
+                <option value="ar">Arabic (العربية)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </li>
+    </ul>
+  </div>
+</nav>
+
+<!-- Hidden element for Google Translate widget -->
+<div id="google_translate_element" style="display:none;"></div>
+
+<!-- ============ PAGE HERO ============ -->
+<header class="travel-hero">
+  <div class="wrap text-center">
+    <div class="hero-kicker">
+      <img src="assets/images/logo-emblem.png" alt="Logo" class="section-logo-icon">
+      <span class="eyebrow">Interactive Global Journey</span>
+    </div>
+    <h1>Srila Prabhupada’s<br><em>World Travel Timeline</em></h1>
+    <p class="lede">
+      12 Circuits of the Globe · 25 Countries Visited · 96 Sourced International Journeys (1965–1977).
+      Replay the historic voyages that established a worldwide spiritual movement.
+    </p>
+  </div>
+</header>
+
+<main class="wrap travel-main-wrap">
+
+  <!-- ============================================================
+       SECTION 1: ANIMATED WORLD MAP VISUALIZER
+       ============================================================ -->
+  <section class="visualizer-card" id="map-section" aria-label="Animated World Travel Map">
+    <div class="visualizer-header">
+      <div class="visualizer-title-group">
+        <h2>Global Journey Visualizer</h2>
+        <p class="subtext">Watch Srila Prabhupada's voyages unfold in chronological order</p>
+      </div>
+    </div>
+
+    <!-- Active Location Banner -->
+    <div class="active-location-banner" id="activeLocationBanner">
+      <span class="banner-pin">📍</span>
+      <span class="banner-text" id="bannerText">Ready to start journey — Aug 13, 1965: India</span>
+    </div>
+
+    <!-- Map Stage Container -->
+    <div class="map-stage" id="mapStage">
+      <!-- Time Readout Box in Top-Right Corner inside Map -->
+      <div class="time-readout-container">
+        <div class="time-label">CURRENT DATE</div>
+        <div class="time-readout" id="timeReadout" data-month="AUG" data-year="1965"></div>
+      </div>
+
+      <!-- High Resolution Golden Relief World Map -->
+      <img class="world-img" id="worldImg" src="assets/images/world-map-gold.jpg" alt="Golden World Map relief projection" />
+
+      <!-- Interactive Animation Canvas (1000x588 resolution matching image aspect ratio) -->
+      <canvas class="travel-canvas" id="travelCanvas" width="1000" height="588"></canvas>
+    </div>
+
+    <!-- Playback Controls & Scrubber -->
+    <div class="controls-bar">
+      <div class="controls-left">
+        <button type="button" class="btn btn-primary btn-icon" id="playPauseBtn" aria-label="Play animation">
+          <span id="playIcon">▶</span> <span id="playText">Play Journey</span>
+        </button>
+        <button type="button" class="btn btn-ghost btn-icon" id="replayBtn" aria-label="Replay from start">
+          <span>↺</span> <span>Replay</span>
+        </button>
+      </div>
+
+      <!-- Scrubber Slider -->
+      <div class="scrubber-wrapper">
+        <input type="range" class="scrubber-slider" id="timelineScrubber" min="0" max="95" step="0.01" value="0" aria-label="Timeline progress scrubber">
+        <div class="scrubber-labels">
+          <span>Aug 1965 (Start)</span>
+          <span id="scrubberCurrentDate">Aug 13, 1965</span>
+          <span>Sep 1977 (End)</span>
+        </div>
+      </div>
+
+      <!-- Speed Selector Pills -->
+      <div class="speed-controls">
+        <span class="speed-label">SPEED:</span>
+        <button type="button" class="speed-btn" data-speed="0.5">0.5x</button>
+        <button type="button" class="speed-btn active" data-speed="1">1x</button>
+        <button type="button" class="speed-btn" data-speed="2">2x</button>
+        <button type="button" class="speed-btn" data-speed="4">4x</button>
+      </div>
+    </div>
+
+    <!-- Country Visit Tally & Legend Grid -->
+    <div class="counters-section">
+      <div class="counters-header">
+        <h3>Country Visit Summary</h3>
+        <span class="counters-subtitle">Live counters update as voyages proceed</span>
+      </div>
+      <div class="counters-grid" id="countryCountersGrid">
+        <!-- Rendered dynamically by JS -->
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SECTION 2: EXPANDABLE LIFE TIMELINE (1896 – 1977)
+       ============================================================ -->
+  <section class="life-timeline-section" id="life-timeline-section" aria-label="Full Life Record 1896-1977">
+    <div class="life-timeline-header">
+      <div class="eyebrow">Comprehensive Biography</div>
+      <h2>The Full Life Record (1896–1977)</h2>
+      <p class="subtext">
+        Every year from his birth in Kolkata to his passing in Vrindavan.
+        Select a decade or click any year to inspect documented travel dates and historical milestones.
+      </p>
+
+      <!-- Decade Filter Tabs (Horizontally scrollable on mobile) -->
+      <div class="decade-tabs" id="decadeTabs" role="tablist">
+        <button type="button" class="decade-tab active" data-decade="all">All Years (1896–1977)</button>
+        <button type="button" class="decade-tab" data-decade="1890s">1890s</button>
+        <button type="button" class="decade-tab" data-decade="1900s">1900s</button>
+        <button type="button" class="decade-tab" data-decade="1910s">1910s</button>
+        <button type="button" class="decade-tab" data-decade="1920s">1920s</button>
+        <button type="button" class="decade-tab" data-decade="1930s">1930s</button>
+        <button type="button" class="decade-tab" data-decade="1940s">1940s</button>
+        <button type="button" class="decade-tab" data-decade="1950s">1950s</button>
+        <button type="button" class="decade-tab" data-decade="1960s">1960s</button>
+        <button type="button" class="decade-tab" data-decade="1970s">1970s</button>
+      </div>
+    </div>
+
+    <!-- Life Timeline Year List / Accordion -->
+    <div class="life-timeline-container" id="lifeTimelineContainer">
+      <!-- Rendered dynamically by JS -->
+    </div>
+  </section>
+
+</main>
+
+<!-- ============ FOOTER ============ -->
+<footer>
+  <div class="wrap">
+    <div class="brand-mini">
+      <img src="assets/images/logo-emblem.png" alt="Logo" class="footer-logo-icon">
+      <img src="assets/images/logo-text-header.png" alt="श्रील प्रभुपाद Srila Prabhupad" class="footer-logo-text-img">
+    </div>
+    <div class="brand-mini">Kept for those who still ask.</div>
+  </div>
+</footer>
+
+<script src="js/audio.js"></script>
+<script src="js/main.js"></script>
+<script src="js/timeline.js"></script>
+<script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+</body>
+</html>
