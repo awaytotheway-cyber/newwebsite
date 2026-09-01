@@ -1,5 +1,15 @@
 /* Shared behavior across all pages: mobile nav toggle & Google Translate integration. */
 
+(function markPhoneLayout() {
+  try {
+    var ua = navigator.userAgent || "";
+    var shortSide = Math.min(screen.width || 9999, screen.height || 9999);
+    if (shortSide <= 550 || /iPhone|iPod|Android.+Mobile|webOS|BlackBerry|IEMobile|Opera Mini/i.test(ua)) {
+      document.documentElement.classList.add("is-phone");
+    }
+  } catch (e) {}
+})();
+
 function googleTranslateElementInit() {
   new google.translate.TranslateElement({
     pageLanguage: 'en',
