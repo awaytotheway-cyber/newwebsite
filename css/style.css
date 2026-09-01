@@ -1,5 +1,5 @@
 /* ============================================================
-   THE LIFE OF SHILOH BROPAD — Living Archive
+   THE LIFE OF SHILOH PRABHUPAD — Living Archive
    Design language: illuminated archive / devotional relic room.
    Ink & brass, a single flame signature carried through every page.
    ============================================================ */
@@ -47,7 +47,12 @@
 
 * { box-sizing: border-box; }
 
-html { scroll-behavior: smooth; }
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  overflow-x: hidden;
+}
 html.timeline-scroll { scroll-behavior: auto; }
 
 body {
@@ -60,6 +65,7 @@ body {
   font-weight: 400;
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
 }
 
 img { max-width: 100%; display: block; }
@@ -262,8 +268,8 @@ textarea:focus-visible {
   li:has(.human-voice-select) { display: none; }
 }
 
-/* ── Mobile hamburger menu — raised from 720→960px ──────────────── */
-@media (max-width: 960px) {
+/* ── Mobile hamburger — 1100px catches phones that report ~980px ── */
+@media (max-width: 1100px), (hover: none) and (pointer: coarse) {
   .nav-links {
     position: fixed;
     inset: 0;
@@ -501,7 +507,7 @@ textarea:focus-visible {
   margin-top: 6px;
 }
 
-@media (max-width: 860px) {
+@media (max-width: 1100px), (hover: none) and (pointer: coarse) {
   .hero-grid {
     display: flex;
     flex-direction: column;
@@ -515,7 +521,7 @@ textarea:focus-visible {
   .portrait-frame img {
     width: 100%;
     max-width: 100%;
-    max-height: min(65dvh, 520px);
+    max-height: min(70dvh, 560px);
     margin: 0 auto;
   }
   .eras {
@@ -574,7 +580,7 @@ section { padding: 96px 0; }
 }
 .era p { color: var(--parchment-dim); font-size: 14.5px; margin: 0; }
 
-@media (max-width: 860px) {
+@media (max-width: 1100px), (hover: none) and (pointer: coarse) {
   .eras { grid-template-columns: 1fr; }
 }
 
@@ -609,10 +615,7 @@ section { padding: 96px 0; }
   object-position: center top;
 }
 
-@media (max-width: 720px) {
-  .gallery { grid-template-columns: repeat(2, 1fr); }
-}
-@media (max-width: 480px) {
+@media (max-width: 1100px), (hover: none) and (pointer: coarse) {
   .gallery { grid-template-columns: 1fr; }
 }
 
@@ -763,7 +766,7 @@ section { padding: 96px 0; }
   margin: 0;
   text-transform: uppercase;
 }
-@media (max-width: 860px) {
+@media (max-width: 1100px), (hover: none) and (pointer: coarse) {
   .voices { grid-template-columns: 1fr; gap: 36px; }
 }
 
@@ -3067,7 +3070,7 @@ body.notes-dragging * { cursor: grabbing !important; }
 /* ── Responsive (Notes + Auth) ───────────────────────────────────── */
 
 /* Notes nav btn hidden on mobile (hamburger takes over) */
-@media (max-width: 960px) {
+@media (max-width: 1100px), (hover: none) and (pointer: coarse) {
   .notes-nav-item { display: none; }
   .auth-nav-item  { display: none; }
   .auth-corner { top: 14px; right: 64px; }
@@ -3105,7 +3108,7 @@ body.notes-dragging * { cursor: grabbing !important; }
    MOBILE / PHONE FIRST — readable type, full-width portrait,
    touch-friendly controls (Android & iOS)
    ============================================================ */
-@media (max-width: 768px) {
+@media (max-width: 1100px), (hover: none) and (pointer: coarse) {
   html {
     font-size: 106.25%;
     -webkit-text-size-adjust: 100%;
@@ -3356,8 +3359,45 @@ body.notes-dragging * { cursor: grabbing !important; }
   }
 
   .ask-hero-logo {
-    width: 96px;
-    height: 96px;
+    width: 168px;
+    height: 168px;
+    margin-bottom: 20px;
+  }
+
+  .chat-intro-block {
+    padding: 16px 0 12px;
+    max-width: none;
+  }
+
+  .chat-intro-block h1 {
+    font-size: 2rem;
+    line-height: 1.15;
+  }
+
+  .chat-intro-block p {
+    font-size: 1.05rem;
+  }
+
+  body.ask-page .ask-chat-fullpage {
+    width: calc(100% - 16px);
+    margin: 8px auto 12px;
+    padding: 12px 14px 8px;
+    border-radius: 14px;
+  }
+
+  .chat-input-inner {
+    padding: 12px 12px 12px 16px;
+    border-radius: 16px;
+  }
+
+  .chat-input-inner textarea {
+    font-size: 16px;
+    min-height: 44px;
+  }
+
+  .send-btn {
+    width: 48px;
+    height: 48px;
   }
 
   /* ── Ask chat ── */
@@ -3472,4 +3512,272 @@ body.notes-dragging * { cursor: grabbing !important; }
     display: none;
   }
 }
+
+/* ============================================================
+   PHONE CLASS — applied by JS when the device is a real phone,
+   even if the browser reports a ~980px "desktop" viewport.
+   These rules do not depend on width media queries.
+   ============================================================ */
+html.is-phone {
+  font-size: 18px;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  overflow-x: hidden;
+}
+html.is-phone body {
+  font-size: 17px;
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+html.is-phone .wrap {
+  padding-left: 16px !important;
+  padding-right: 16px !important;
+  max-width: 100%;
+}
+
+/* Nav: hamburger, hide the cramped desktop link row */
+html.is-phone .site-nav .wrap {
+  height: 64px;
+  gap: 10px;
+}
+html.is-phone .brand {
+  max-width: none;
+  overflow: visible;
+}
+html.is-phone .site-logo-icon {
+  width: 48px !important;
+  height: 48px !important;
+}
+html.is-phone .site-logo-text-img {
+  display: block !important;
+  height: 34px !important;
+  max-width: 42vw;
+}
+html.is-phone .nav-toggle {
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(145deg, rgba(28, 25, 42, 0.92), rgba(16, 14, 26, 0.96));
+  border: none;
+  color: var(--brass-bright);
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  font-size: 24px;
+  cursor: pointer;
+  z-index: 10000;
+  position: relative;
+  flex-shrink: 0;
+}
+html.is-phone .nav-links {
+  position: fixed !important;
+  inset: 0 !important;
+  background: linear-gradient(160deg, rgba(10, 10, 26, 0.97), rgba(16, 15, 24, 0.95));
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 28px !important;
+  font-size: 20px !important;
+  z-index: 9999;
+  transform: translateX(100%);
+  opacity: 0;
+  pointer-events: none;
+  margin: 0 !important;
+}
+html.is-phone .nav-links.open {
+  opacity: 1;
+  transform: translateX(0);
+  pointer-events: auto;
+}
+html.is-phone .nav-links a {
+  font-size: 20px;
+  padding: 10px 16px;
+}
+html.is-phone .notes-nav-item,
+html.is-phone .auth-nav-item {
+  display: none !important;
+}
+
+/* Hero: portrait first, full width */
+html.is-phone .hero {
+  padding: 40px 0 48px;
+}
+html.is-phone .hero-grid {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 28px !important;
+  grid-template-columns: 1fr !important;
+}
+html.is-phone .hero-grid .portrait-frame {
+  order: -1;
+  width: 100% !important;
+  max-width: none !important;
+  margin: 0;
+}
+html.is-phone .portrait-frame img {
+  width: 100% !important;
+  max-width: 100% !important;
+  height: auto !important;
+  max-height: 72vh !important;
+  object-fit: contain;
+  margin: 0 auto;
+}
+html.is-phone .hero h1 {
+  font-size: 42px !important;
+  line-height: 1.08 !important;
+  margin-bottom: 16px;
+}
+html.is-phone .hero p.lede {
+  font-size: 17px !important;
+  line-height: 1.65 !important;
+  max-width: none !important;
+  margin-bottom: 24px;
+}
+html.is-phone .hero-actions {
+  flex-direction: column !important;
+  align-items: stretch !important;
+  gap: 12px;
+}
+html.is-phone .hero-actions .btn,
+html.is-phone .hero-actions .audio-narration-btn {
+  width: 100%;
+  justify-content: center;
+  min-height: 50px;
+  font-size: 15px !important;
+  padding: 16px 22px;
+}
+html.is-phone .eyebrow {
+  font-size: 13px !important;
+}
+html.is-phone .section-logo-icon {
+  width: 40px;
+  height: 40px;
+}
+
+/* Sections, eras, photos, quotes — one column, readable type */
+html.is-phone section {
+  padding: 48px 0;
+}
+html.is-phone .section-head {
+  margin-bottom: 32px;
+}
+html.is-phone .section-head h2 {
+  font-size: 30px !important;
+}
+html.is-phone .section-head p {
+  font-size: 16px !important;
+}
+html.is-phone .divider-logo-icon {
+  width: 48px;
+  height: 48px;
+}
+html.is-phone .eras,
+html.is-phone .voices,
+html.is-phone .gallery {
+  grid-template-columns: 1fr !important;
+}
+html.is-phone .era {
+  padding: 28px 20px;
+}
+html.is-phone .era h3 {
+  font-size: 24px !important;
+}
+html.is-phone .era p {
+  font-size: 16px !important;
+  line-height: 1.6;
+}
+html.is-phone .era .years {
+  font-size: 14px !important;
+}
+html.is-phone .voice .quote {
+  font-size: 18px !important;
+  line-height: 1.6;
+}
+html.is-phone .voice .who {
+  font-size: 14px !important;
+}
+html.is-phone .ask-cta {
+  padding: 36px 20px;
+}
+html.is-phone .ask-cta h2 {
+  font-size: 28px !important;
+}
+html.is-phone .ask-cta p {
+  font-size: 16px !important;
+}
+html.is-phone .btn {
+  min-height: 50px;
+  font-size: 15px !important;
+  padding: 16px 22px;
+}
+html.is-phone .audio-narration-btn {
+  min-height: 44px;
+  font-size: 14px !important;
+  padding: 10px 16px;
+}
+
+/* Ask the Archive */
+html.is-phone .ask-hero-logo {
+  width: 170px !important;
+  height: 170px !important;
+  margin: 8px auto 16px !important;
+}
+html.is-phone .chat-intro-block {
+  padding: 12px 0 !important;
+  max-width: none !important;
+}
+html.is-phone .chat-intro-block h1 {
+  font-size: 32px !important;
+  line-height: 1.15;
+}
+html.is-phone .chat-intro-block p {
+  font-size: 16px !important;
+}
+html.is-phone .msg {
+  max-width: 100% !important;
+}
+html.is-phone .msg .bubble {
+  font-size: 16px !important;
+  line-height: 1.6;
+  padding: 14px 16px;
+}
+html.is-phone body.ask-page .ask-chat-fullpage {
+  width: calc(100% - 12px) !important;
+  max-width: none !important;
+  margin: 8px auto 10px !important;
+  padding: 10px 12px 8px !important;
+  border-radius: 14px;
+}
+html.is-phone .chat-input-inner textarea {
+  font-size: 16px !important;
+  min-height: 44px;
+}
+html.is-phone .send-btn {
+  width: 48px !important;
+  height: 48px !important;
+}
+
+/* Auth + notes */
+html.is-phone .auth-corner {
+  top: 10px !important;
+  right: 62px !important;
+}
+html.is-phone .auth-corner-signin {
+  font-size: 14px !important;
+  padding: 8px 12px 8px 10px !important;
+  min-height: 44px;
+}
+html.is-phone .notes-tab {
+  width: 52px !important;
+  height: 52px !important;
+}
+html.is-phone .timeline-hero h1,
+html.is-phone .ask-hero h1 {
+  font-size: 32px !important;
+}
+html.is-phone .timeline-hero p,
+html.is-phone .ask-hero p {
+  font-size: 16px !important;
+}
+
 
