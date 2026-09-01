@@ -2,10 +2,21 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, viewport-fit=cover">
+<script>
+(function () {
+  try {
+    var ua = navigator.userAgent || "";
+    var shortSide = Math.min(screen.width || 9999, screen.height || 9999);
+    if (shortSide <= 550 || /iPhone|iPod|Android.+Mobile|webOS|BlackBerry|IEMobile|Opera Mini/i.test(ua)) {
+      document.documentElement.classList.add("is-phone");
+    }
+  } catch (e) {}
+})();
+</script>
 <title>PRABHUPAD SHIKSHA — The Life of A.C. Bhaktivedanta Swami</title>
 <meta name="description" content="PRABHUPAD SHIKSHA — a living archive of the life of Srila Prabhupada, founder of the Hare Krishna movement.">
-<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/style.css?v=20260901-phone">
 </head>
 <body class="home-page">
 
@@ -229,7 +240,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="js/auth.js"></script>
 <script src="js/audio.js"></script>
-<script src="js/main.js"></script>
+<script src="js/main.js?v=20260901-phone"></script>
 <script src="js/notes.js"></script>
 <script src="js/privacy.js"></script>
 <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
