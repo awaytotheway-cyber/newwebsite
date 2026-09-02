@@ -22,16 +22,19 @@ document.addEventListener("DOMContentLoaded", () => {
   const toggle = document.getElementById("navToggle");
   const links = document.getElementById("navLinks");
   if (toggle && links) {
-    toggle.addEventListener("click", () => {
-      const isOpen = links.classList.toggle("open");
+    const setMenuOpen = (isOpen) => {
+      links.classList.toggle("open", isOpen);
+      document.body.classList.toggle("nav-open", isOpen);
       toggle.setAttribute("aria-expanded", String(isOpen));
+      toggle.textContent = isOpen ? "✕" : "☰";
+    };
+
+    toggle.addEventListener("click", () => {
+      setMenuOpen(!links.classList.contains("open"));
     });
 
     links.querySelectorAll("a").forEach((a) => {
-      a.addEventListener("click", () => {
-        links.classList.remove("open");
-        toggle.setAttribute("aria-expanded", "false");
-      });
+      a.addEventListener("click", () => setMenuOpen(false));
     });
   }
 
