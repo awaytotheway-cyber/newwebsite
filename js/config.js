@@ -15,6 +15,6 @@ window.SITE_CONFIG = {
   // ── Supabase (for Notes + Google Auth) ──────────────────────────
   // Follow the setup guide in the implementation plan to get these values.
   // Leave both as "" and the Notes feature will use localStorage instead.
-  SUPABASE_URL:      "https://frlzcwsjiirgwqzwycfy.supabase.co",
-  SUPABASE_ANON_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZybHpjd3NqaWlyZ3dxend5Y2Z5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODcyMDg2MzMsImV4cCI6MjEwMjc4NDYzM30.q2yQQr85Gi_Adh2UAKic5cTpYVLDE4gsOQwKTryNgG4"
+  SUPABASE_URL:      "jpfzewkwmhdtuffrvdat.supabase.co",
+  SUPABASE_ANON_KEY: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpwZnpld2t3bWhkdHVmZnJ2ZGF0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODgzMzQ2ODcsImV4cCI6MjEwMzkxMDY4N30.whrxv3QX6kavl-vnwu7HApDy0kh2aBa4YMBxmE5T6aQ"
 };
