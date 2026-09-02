@@ -1,5 +1,5 @@
 /* ============================================================
-   THE LIFE OF SHILOH PRABHUPAD — Living Archive
+   THE LIFE OF SHILOH BROPAD — Living Archive
    Design language: illuminated archive / devotional relic room.
    Ink & brass, a single flame signature carried through every page.
    ============================================================ */
@@ -270,26 +270,47 @@ textarea:focus-visible {
 
 /* ── Mobile hamburger — 1100px catches phones that report ~980px ── */
 @media (max-width: 1100px), (hover: none) and (pointer: coarse) {
+  /* backdrop-filter creates a containing block that traps position:fixed
+     inside the 64px nav — disable it so the overlay covers the whole screen */
+  .site-nav {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    transform: none;
+    filter: none;
+    animation: none;
+    overflow: visible;
+  }
   .nav-links {
+    display: flex;
     position: fixed;
-    inset: 0;
-    background: linear-gradient(160deg, rgba(10, 10, 26, 0.97), rgba(16, 15, 24, 0.95));
-    backdrop-filter: blur(24px) saturate(1.5);
-    -webkit-backdrop-filter: blur(24px) saturate(1.5);
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100vw;
+    height: 100dvh;
+    height: 100vh;
+    margin: 0;
+    padding: 110px 28px 48px;
+    box-sizing: border-box;
+    overflow-y: auto;
+    overflow-x: hidden;
+    background: linear-gradient(160deg, rgba(10, 10, 26, 0.98), rgba(16, 15, 24, 0.96));
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-    gap: 32px;
-    font-size: 18px;
+    justify-content: flex-start;
+    gap: 8px;
+    font-size: 28px;
     font-weight: 500;
     z-index: 9999;
-    border-left: 1px solid rgba(201, 161, 83, 0.15);
-    box-shadow: -8px 0 40px rgba(0, 0, 0, 0.5);
+    border-left: none;
+    box-shadow: none;
     transform: translateX(100%);
     opacity: 0;
     pointer-events: none;
     transition: opacity 0.35s ease, transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-    /* Reset medium-screen overrides inside full mobile menu */
     text-transform: uppercase;
     letter-spacing: 0.06em;
   }
@@ -298,19 +319,32 @@ textarea:focus-visible {
     transform: translateX(0);
     pointer-events: auto;
   }
-  /* Show everything in mobile menu */
-  .nav-links li:has(.human-voice-select) { display: flex !important; }
-  /* Restore Notes button sizes inside open mobile menu */
-  .nav-links .notes-nav-btn { padding: 10px 18px; font-size: 13px; }
-  .nav-toggle {
+  .nav-links li {
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    list-style: none;
+  }
+  .nav-links a {
     display: block;
+    width: 100%;
+    text-align: center;
+    font-size: 28px;
+    padding: 16px 12px;
+  }
+  .nav-links li:has(.human-voice-select) { display: flex !important; }
+  .nav-links .notes-nav-btn { padding: 14px 22px; font-size: 18px; }
+  .nav-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     background: linear-gradient(145deg, rgba(28, 25, 42, 0.92), rgba(16, 14, 26, 0.96));
     border: none;
     color: var(--brass-bright);
-    width: 50px;
-    height: 50px;
-    border-radius: 14px;
-    font-size: 24px;
+    width: 64px;
+    height: 64px;
+    border-radius: 16px;
+    font-size: 32px;
     cursor: pointer;
     z-index: 10000;
     position: relative;
@@ -1165,8 +1199,13 @@ body.ask-page {
     var(--ink);
   display: flex;
   flex-direction: column;
+  height: 100dvh;
   height: 100vh;
   overflow: hidden;
+}
+body.ask-page .site-nav {
+  flex-shrink: 0;
+  z-index: 40;
 }
 
 /* Full-page chat container with Illuminated Archive Frame */
@@ -3110,9 +3149,14 @@ body.notes-dragging * { cursor: grabbing !important; }
    ============================================================ */
 @media (max-width: 1100px), (hover: none) and (pointer: coarse) {
   html {
-    font-size: 106.25%;
+    font-size: 22px;
     -webkit-text-size-adjust: 100%;
     text-size-adjust: 100%;
+  }
+
+  body {
+    font-size: 22px;
+    line-height: 1.5;
   }
 
   .wrap {
@@ -3122,7 +3166,7 @@ body.notes-dragging * { cursor: grabbing !important; }
 
   /* ── Nav: larger logo, menu icon, links ── */
   .site-nav .wrap {
-    height: 64px;
+    height: 88px;
     gap: 12px;
   }
 
@@ -3132,15 +3176,15 @@ body.notes-dragging * { cursor: grabbing !important; }
   }
 
   .site-logo-icon {
-    width: 56px;
-    height: 56px;
+    width: 72px;
+    height: 72px;
     border-width: 2.5px;
   }
 
   .site-logo-text-img {
     display: block !important;
-    height: 40px;
-    max-width: min(160px, 42vw);
+    height: 48px;
+    max-width: min(220px, 48vw);
   }
 
   .site-brand-name {
@@ -3148,20 +3192,21 @@ body.notes-dragging * { cursor: grabbing !important; }
   }
 
   .nav-toggle {
-    width: 52px;
-    height: 52px;
-    font-size: 26px;
-    border-radius: 14px;
+    width: 64px;
+    height: 64px;
+    font-size: 32px;
+    border-radius: 16px;
   }
 
   .nav-links {
-    font-size: 1.2rem;
-    gap: 28px;
+    font-size: 28px;
+    gap: 8px;
     letter-spacing: 0.08em;
   }
 
   .nav-links a {
-    padding-bottom: 8px;
+    padding: 16px 12px;
+    font-size: 28px;
   }
 
   .nav-links .notes-nav-btn {
@@ -3229,14 +3274,14 @@ body.notes-dragging * { cursor: grabbing !important; }
   }
 
   .hero h1 {
-    font-size: clamp(2.75rem, 12vw, 3.75rem);
-    line-height: 1.05;
+    font-size: 52px;
+    line-height: 1.08;
     margin-bottom: 20px;
   }
 
   .hero p.lede {
-    font-size: 1.125rem;
-    line-height: 1.65;
+    font-size: 30px;
+    line-height: 1.45;
     max-width: none;
     margin-bottom: 28px;
   }
@@ -3266,11 +3311,11 @@ body.notes-dragging * { cursor: grabbing !important; }
   }
 
   .section-head h2 {
-    font-size: clamp(1.85rem, 8vw, 2.35rem);
+    font-size: 40px;
   }
 
   .section-head p {
-    font-size: 1.05rem;
+    font-size: 28px;
   }
 
   .divider-logo-icon {
@@ -3283,22 +3328,22 @@ body.notes-dragging * { cursor: grabbing !important; }
   }
 
   .era h3 {
-    font-size: 1.45rem;
+    font-size: 32px;
   }
 
   .era p {
-    font-size: 1rem;
-    line-height: 1.6;
+    font-size: 28px;
+    line-height: 1.45;
   }
 
   .era .years {
-    font-size: 0.85rem;
+    font-size: 18px;
   }
 
   .audio-narration-btn {
-    min-height: 44px;
-    font-size: 0.9rem;
-    padding: 10px 18px;
+    min-height: 52px;
+    font-size: 20px;
+    padding: 12px 18px;
   }
 
   /* ── Gallery: single column, full width photos ── */
@@ -3313,25 +3358,25 @@ body.notes-dragging * { cursor: grabbing !important; }
 
   /* ── Voices & CTA ── */
   .voice .quote {
-    font-size: 1.1rem;
-    line-height: 1.65;
+    font-size: 26px;
+    line-height: 1.5;
   }
 
   .voice .who {
-    font-size: 0.9rem;
+    font-size: 18px;
   }
 
   .ask-cta h2 {
-    font-size: clamp(1.65rem, 7vw, 2rem);
+    font-size: 36px;
   }
 
   .ask-cta p {
-    font-size: 1.05rem;
+    font-size: 24px;
   }
 
   .btn {
-    min-height: 50px;
-    font-size: 0.95rem;
+    min-height: 56px;
+    font-size: 20px;
     padding: 16px 24px;
   }
 
@@ -3370,19 +3415,51 @@ body.notes-dragging * { cursor: grabbing !important; }
   }
 
   .chat-intro-block h1 {
-    font-size: 2rem;
+    font-size: 36px;
     line-height: 1.15;
   }
 
   .chat-intro-block p {
-    font-size: 1.05rem;
+    font-size: 24px;
   }
 
   body.ask-page .ask-chat-fullpage {
-    width: calc(100% - 16px);
-    margin: 8px auto 12px;
-    padding: 12px 14px 8px;
-    border-radius: 14px;
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    padding: 8px 14px 0;
+    border-radius: 0;
+    border-left: none;
+    border-right: none;
+    border-bottom: none;
+    min-height: 0;
+    flex: 1;
+  }
+
+  body.ask-page .chat-log-fullpage {
+    padding-bottom: 140px;
+  }
+
+  body.ask-page .chat-input-sticky {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 250;
+    padding: 12px 14px calc(32px + env(safe-area-inset-bottom, 0px));
+    background: linear-gradient(to top, var(--ink) 70%, rgba(16, 15, 24, 0.94) 100%);
+  }
+
+  body.ask-page .chat-input-hint {
+    display: none;
+  }
+
+  body.ask-page .notes-tab {
+    top: auto;
+    bottom: 170px;
+    right: 12px;
+    transform: none;
+    z-index: 180;
   }
 
   .chat-input-inner {
@@ -3391,13 +3468,13 @@ body.notes-dragging * { cursor: grabbing !important; }
   }
 
   .chat-input-inner textarea {
-    font-size: 16px;
-    min-height: 44px;
+    font-size: 24px;
+    min-height: 56px;
   }
 
   .send-btn {
-    width: 48px;
-    height: 48px;
+    width: 56px;
+    height: 56px;
   }
 
   /* ── Ask chat ── */
@@ -3413,7 +3490,7 @@ body.notes-dragging * { cursor: grabbing !important; }
   }
 
   .msg .bubble {
-    font-size: 1rem;
+    font-size: 24px;
   }
 
   .chip {
@@ -3481,19 +3558,19 @@ body.notes-dragging * { cursor: grabbing !important; }
   }
 
   .site-logo-icon {
-    width: 50px;
-    height: 50px;
+    width: 72px;
+    height: 72px;
   }
 
   .site-logo-text-img {
-    height: 36px;
-    max-width: 38vw;
+    height: 46px;
+    max-width: 46vw;
   }
 
   .nav-toggle {
-    width: 48px;
-    height: 48px;
-    font-size: 24px;
+    width: 64px;
+    height: 64px;
+    font-size: 32px;
   }
 
   .hero h1 {
@@ -3519,15 +3596,18 @@ body.notes-dragging * { cursor: grabbing !important; }
    These rules do not depend on width media queries.
    ============================================================ */
 html.is-phone {
-  font-size: 18px;
+  font-size: 32px;
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
   overflow-x: hidden;
 }
 html.is-phone body {
-  font-size: 17px;
-  line-height: 1.6;
+  font-size: 32px;
+  line-height: 1.5;
   overflow-x: hidden;
+}
+html.is-phone body.nav-open {
+  overflow: hidden;
 }
 html.is-phone .wrap {
   padding-left: 16px !important;
@@ -3535,23 +3615,33 @@ html.is-phone .wrap {
   max-width: 100%;
 }
 
-/* Nav: hamburger, hide the cramped desktop link row */
+/* Nav: big logo + hamburger. Overlay must escape the nav bar. */
+html.is-phone .site-nav {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  transform: none !important;
+  filter: none !important;
+  animation: none !important;
+  overflow: visible !important;
+}
 html.is-phone .site-nav .wrap {
-  height: 64px;
+  height: 92px;
   gap: 10px;
+  overflow: visible !important;
 }
 html.is-phone .brand {
-  max-width: none;
-  overflow: visible;
+  max-width: none !important;
+  overflow: visible !important;
+  gap: 12px;
 }
 html.is-phone .site-logo-icon {
-  width: 48px !important;
-  height: 48px !important;
+  width: 76px !important;
+  height: 76px !important;
 }
 html.is-phone .site-logo-text-img {
   display: block !important;
-  height: 34px !important;
-  max-width: 42vw;
+  height: 52px !important;
+  max-width: 48vw;
 }
 html.is-phone .nav-toggle {
   display: flex !important;
@@ -3560,40 +3650,76 @@ html.is-phone .nav-toggle {
   background: linear-gradient(145deg, rgba(28, 25, 42, 0.92), rgba(16, 14, 26, 0.96));
   border: none;
   color: var(--brass-bright);
-  width: 48px;
-  height: 48px;
-  border-radius: 14px;
-  font-size: 24px;
+  width: 64px !important;
+  height: 64px !important;
+  border-radius: 16px;
+  font-size: 32px !important;
+  line-height: 1;
   cursor: pointer;
-  z-index: 10000;
+  z-index: 10001;
   position: relative;
   flex-shrink: 0;
 }
 html.is-phone .nav-links {
+  display: flex !important;
   position: fixed !important;
-  inset: 0 !important;
-  background: linear-gradient(160deg, rgba(10, 10, 26, 0.97), rgba(16, 15, 24, 0.95));
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  width: 100vw !important;
+  height: 100dvh !important;
+  height: 100vh !important;
+  margin: 0 !important;
+  padding: 120px 24px 48px !important;
+  box-sizing: border-box;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+  background: rgba(10, 10, 26, 0.98) !important;
   flex-direction: column !important;
-  align-items: center !important;
-  justify-content: center !important;
-  gap: 28px !important;
-  font-size: 20px !important;
+  flex-wrap: nowrap !important;
+  align-items: stretch !important;
+  justify-content: flex-start !important;
+  gap: 4px !important;
+  font-size: 32px !important;
   z-index: 9999;
   transform: translateX(100%);
   opacity: 0;
   pointer-events: none;
-  margin: 0 !important;
 }
 html.is-phone .nav-links.open {
   opacity: 1;
   transform: translateX(0);
   pointer-events: auto;
 }
-html.is-phone .nav-links a {
-  font-size: 20px;
-  padding: 10px 16px;
+html.is-phone .nav-links li {
+  display: flex !important;
+  width: 100% !important;
+  justify-content: center;
+  visibility: visible !important;
+  opacity: 1 !important;
+  height: auto !important;
 }
-html.is-phone .notes-nav-item,
+html.is-phone .nav-links a {
+  display: block !important;
+  width: 100%;
+  text-align: center;
+  font-size: 32px !important;
+  line-height: 1.3;
+  padding: 18px 12px !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  color: var(--parchment) !important;
+}
+html.is-phone .nav-links a[aria-current="page"] {
+  color: var(--brass-bright) !important;
+}
+html.is-phone .nav-links li:has(.human-voice-select) {
+  display: none !important;
+}
+html.is-phone .notes-nav-item {
+  display: flex !important;
+}
 html.is-phone .auth-nav-item {
   display: none !important;
 }
@@ -3623,13 +3749,13 @@ html.is-phone .portrait-frame img {
   margin: 0 auto;
 }
 html.is-phone .hero h1 {
-  font-size: 42px !important;
+  font-size: 56px !important;
   line-height: 1.08 !important;
   margin-bottom: 16px;
 }
 html.is-phone .hero p.lede {
-  font-size: 17px !important;
-  line-height: 1.65 !important;
+  font-size: 32px !important;
+  line-height: 1.45 !important;
   max-width: none !important;
   margin-bottom: 24px;
 }
@@ -3642,16 +3768,16 @@ html.is-phone .hero-actions .btn,
 html.is-phone .hero-actions .audio-narration-btn {
   width: 100%;
   justify-content: center;
-  min-height: 50px;
-  font-size: 15px !important;
+  min-height: 56px;
+  font-size: 22px !important;
   padding: 16px 22px;
 }
 html.is-phone .eyebrow {
-  font-size: 13px !important;
+  font-size: 18px !important;
 }
 html.is-phone .section-logo-icon {
-  width: 40px;
-  height: 40px;
+  width: 56px;
+  height: 56px;
 }
 
 /* Sections, eras, photos, quotes — one column, readable type */
@@ -3662,14 +3788,14 @@ html.is-phone .section-head {
   margin-bottom: 32px;
 }
 html.is-phone .section-head h2 {
-  font-size: 30px !important;
+  font-size: 42px !important;
 }
 html.is-phone .section-head p {
-  font-size: 16px !important;
+  font-size: 30px !important;
 }
 html.is-phone .divider-logo-icon {
-  width: 48px;
-  height: 48px;
+  width: 64px;
+  height: 64px;
 }
 html.is-phone .eras,
 html.is-phone .voices,
@@ -3680,46 +3806,46 @@ html.is-phone .era {
   padding: 28px 20px;
 }
 html.is-phone .era h3 {
-  font-size: 24px !important;
+  font-size: 32px !important;
 }
 html.is-phone .era p {
-  font-size: 16px !important;
-  line-height: 1.6;
+  font-size: 30px !important;
+  line-height: 1.45;
 }
 html.is-phone .era .years {
-  font-size: 14px !important;
+  font-size: 20px !important;
 }
 html.is-phone .voice .quote {
-  font-size: 18px !important;
-  line-height: 1.6;
+  font-size: 32px !important;
+  line-height: 1.45;
 }
 html.is-phone .voice .who {
-  font-size: 14px !important;
+  font-size: 20px !important;
 }
 html.is-phone .ask-cta {
   padding: 36px 20px;
 }
 html.is-phone .ask-cta h2 {
-  font-size: 28px !important;
+  font-size: 40px !important;
 }
 html.is-phone .ask-cta p {
-  font-size: 16px !important;
+  font-size: 26px !important;
 }
 html.is-phone .btn {
-  min-height: 50px;
-  font-size: 15px !important;
+  min-height: 56px;
+  font-size: 22px !important;
   padding: 16px 22px;
 }
 html.is-phone .audio-narration-btn {
-  min-height: 44px;
-  font-size: 14px !important;
-  padding: 10px 16px;
+  min-height: 52px;
+  font-size: 20px !important;
+  padding: 12px 18px;
 }
 
 /* Ask the Archive */
 html.is-phone .ask-hero-logo {
-  width: 170px !important;
-  height: 170px !important;
+  width: 180px !important;
+  height: 180px !important;
   margin: 8px auto 16px !important;
 }
 html.is-phone .chat-intro-block {
@@ -3727,57 +3853,96 @@ html.is-phone .chat-intro-block {
   max-width: none !important;
 }
 html.is-phone .chat-intro-block h1 {
-  font-size: 32px !important;
+  font-size: 40px !important;
   line-height: 1.15;
 }
 html.is-phone .chat-intro-block p {
-  font-size: 16px !important;
+  font-size: 30px !important;
 }
 html.is-phone .msg {
   max-width: 100% !important;
 }
 html.is-phone .msg .bubble {
-  font-size: 16px !important;
-  line-height: 1.6;
-  padding: 14px 16px;
+  font-size: 30px !important;
+  line-height: 1.45;
+  padding: 16px 18px;
 }
 html.is-phone body.ask-page .ask-chat-fullpage {
-  width: calc(100% - 12px) !important;
+  width: 100% !important;
   max-width: none !important;
-  margin: 8px auto 10px !important;
-  padding: 10px 12px 8px !important;
-  border-radius: 14px;
+  margin: 0 !important;
+  padding: 8px 14px 0 !important;
+  border-radius: 0;
+  border-left: none;
+  border-right: none;
+  border-bottom: none;
+  min-height: 0;
+  flex: 1;
+}
+html.is-phone body.ask-page .chat-log-fullpage {
+  padding-bottom: 150px;
+}
+html.is-phone body.ask-page .chat-input-sticky {
+  position: fixed !important;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 250 !important;
+    padding: 12px 14px calc(32px + env(safe-area-inset-bottom, 0px));
+  background: linear-gradient(to top, var(--ink) 70%, rgba(16, 15, 24, 0.94) 100%);
+}
+html.is-phone body.ask-page .chat-input-hint {
+  display: none;
 }
 html.is-phone .chat-input-inner textarea {
-  font-size: 16px !important;
-  min-height: 44px;
+  font-size: 26px !important;
+  min-height: 56px;
 }
 html.is-phone .send-btn {
-  width: 48px !important;
-  height: 48px !important;
+  width: 60px !important;
+  height: 60px !important;
+}
+html.is-phone body.ask-page .notes-tab {
+  top: auto !important;
+  bottom: 170px !important;
+  right: 12px !important;
+  transform: none !important;
+  z-index: 180;
+}
+html.is-phone .msg .label {
+  font-size: 16px !important;
+}
+html.is-phone .translate-btn {
+  font-size: 22px !important;
+  min-height: 52px;
+  padding: 12px 18px;
+}
+html.is-phone .human-voice-select {
+  font-size: 20px !important;
+  min-height: 52px;
 }
 
 /* Auth + notes */
 html.is-phone .auth-corner {
-  top: 10px !important;
-  right: 62px !important;
+  top: 14px !important;
+  right: 84px !important;
 }
 html.is-phone .auth-corner-signin {
-  font-size: 14px !important;
-  padding: 8px 12px 8px 10px !important;
-  min-height: 44px;
+  font-size: 18px !important;
+  padding: 10px 14px 10px 12px !important;
+  min-height: 48px;
 }
 html.is-phone .notes-tab {
-  width: 52px !important;
-  height: 52px !important;
+  width: 60px !important;
+  height: 60px !important;
 }
 html.is-phone .timeline-hero h1,
 html.is-phone .ask-hero h1 {
-  font-size: 32px !important;
+  font-size: 42px !important;
 }
 html.is-phone .timeline-hero p,
 html.is-phone .ask-hero p {
-  font-size: 16px !important;
+  font-size: 26px !important;
 }
 
 
