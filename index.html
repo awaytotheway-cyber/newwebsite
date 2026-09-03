@@ -2,248 +2,281 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, viewport-fit=cover">
-<script>
-(function () {
-  try {
-    var ua = navigator.userAgent || "";
-    var shortSide = Math.min(screen.width || 9999, screen.height || 9999);
-    if (shortSide <= 550 || /iPhone|iPod|Android.+Mobile|webOS|BlackBerry|IEMobile|Opera Mini/i.test(ua)) {
-      document.documentElement.classList.add("is-phone");
-    }
-  } catch (e) {}
-})();
-</script>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>PRABHUPAD SHIKSHA — The Life of A.C. Bhaktivedanta Swami</title>
 <meta name="description" content="PRABHUPAD SHIKSHA — a living archive of the life of Srila Prabhupada, founder of the Hare Krishna movement.">
-<link rel="stylesheet" href="css/style.css?v=20260901-phone5">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=Noto+Sans+Devanagari:wght@500;600;700&display=swap">
+<link rel="stylesheet" href="css/style.css?v=20260903-l">
 </head>
 <body class="home-page">
 
-<nav class="site-nav">
-  <div class="wrap">
+<nav class="site-nav" id="siteNav">
+  <div class="nav-mantra" aria-hidden="true">
+    <p class="nav-mantra-row">Hare Krishna · हरे कृष्ण · হরে কৃষ্ণ · ஹரே கிருஷ்ணா · హరే కృష్ణ · હરે કૃષ્ણ · ಹರೇ ಕೃಷ್ಣ · ਹਰੇ ਕ੍ਰਿਸ਼ਨ · ഹരേ കൃഷ്ണ · ହରେ କୃଷ୍ଣ · Харе Кришна · ハレ・クリシュナ · 하레 크리슈나 · 哈瑞奎师那 · Hare Kṛṣṇa · Hare Krishna · हरे कृष्ण · হরে কৃষ্ণ · ஹரே கிருஷ்ணா · హరే కృష్ణ · હરે કૃષ્ણ · ಹರೇ ಕೃಷ್ಣ · ਹਰੇ ਕ੍ਰਿਸ਼ਨ · ഹരേ കൃഷ്ണ · Харе Кришна · ハレ・クリシュナ · 하레 크리슈나 · 哈瑞奎师那 · Hare Kṛṣṇa · Hare Krishna · हरे कृष्ण · হরে কৃষ্ণ · ஹரே கிருஷ்ணா · హరే కృష్ణ</p>
+    <p class="nav-mantra-row">हरे कृष्ण · হরে কৃষ্ণ · ஹரே கிருஷ்ணா · హరే కృష్ణ · હરે કૃષ્ણ · ಹರೇ ಕೃಷ್ಣ · ਹਰੇ ਕ੍ਰਿਸ਼ਨ · ഹരേ കൃഷ്ണ · ହରେ କୃଷ୍ଣ · Харе Кришна · ハレ・クリシュナ · 하레 크리슈나 · 哈瑞奎师那 · Hare Kṛṣṇa · Hare Krishna · हरे कृष्ण · হরে কৃষ্ণ · ஹரே கிருஷ்ணா · హరే కృష్ణ · હરે કૃષ્ણ · ಹರೇ ಕೃಷ್ಣ · ਹਰੇ ਕ੍ਰਿਸ਼ਨ · ഹരേ കൃഷ്ണ · Харе Кришна · ハレ・クリシュナ · 하레 크리슈나 · 哈瑞奎师那 · Hare Krishna · हरे कृष्ण · হরে কৃষ্ণ</p>
+    <p class="nav-mantra-row">হরে কৃষ্ণ · ஹரே கிருஷ்ணா · హరే కృష్ణ · હરે કૃષ્ણ · ಹರೇ ಕೃಷ್ಣ · ਹਰੇ ਕ੍ਰਿਸ਼ਨ · ഹരേ കൃഷ്ണ · ହରେ କୃଷ୍ଣ · Харе Кришна · ハレ・クリシュナ · 하레 크리슈나 · 哈瑞奎师那 · Hare Kṛṣṇa · Hare Krishna · हरे कृष्ण · হরে কৃষ্ণ · ஹரே கிருஷ்ணா · హరే కృష్ణ · હરે કૃષ્ણ · ಹರೇ ಕೃಷ್ಣ · ਹਰੇ ਕ੍ਰਿਸ਼ਨ · ഹരേ കൃഷ്ണ · Харе Кришна · ハレ・クリシュナ · 하레 크리슈나 · Hare Krishna · हरे कृष्ण · হরে কৃষ্ণ · ஹரே கிருஷ்ணா</p>
+    <p class="nav-mantra-row">ஹரே கிருஷ்ணா · హరే కృష్ణ · હરે કૃષ્ણ · ಹರೇ ಕೃಷ್ಣ · ਹਰੇ ਕ੍ਰਿਸ਼ਨ · ഹരേ കൃഷ്ണ · ହରେ କୃଷ୍ଣ · Харе Кришна · ハレ・クリシュナ · 하레 크리슈나 · 哈瑞奎师那 · Hare Kṛṣṇa · Hare Krishna · हरे कृष्ण · হরে কৃষ্ণ · ஹரே கிருஷ்ணா · హరే కృష్ణ · હરે કૃષ્ણ · ಹರೇ ಕೃಷ್ಣ · ਹਰੇ ਕ੍ਰਿਸ਼ਨ · ഹരേ കൃഷ്ണ · Харе Кришна · ハレ・クリシュナ · Hare Krishna · हरे कृष्ण · হরে কৃষ্ণ · ஹரே கிருஷ்ணா · హరే కృష్ణ</p>
+    <p class="nav-mantra-row">హరే కృష్ణ · હરે કૃષ્ણ · ಹರೇ ಕೃಷ್ಣ · ਹਰੇ ਕ੍ਰਿਸ਼ਨ · ഹരേ കൃഷ്ണ · ହରେ କୃଷ୍ଣ · Харе Кришна · ハレ・クリシュナ · 하레 크리슈나 · 哈瑞奎师那 · Hare Kṛṣṇa · Hare Krishna · हरे कृष्ण · হরে কৃষ্ণ · ஹரே கிருஷ்ணா · హరే కృష్ణ · હરે કૃષ્ણ · ಹರೇ ಕೃಷ್ಣ · ਹਰੇ ਕ੍ਰਿਸ਼ਨ · ഹരേ കൃഷ്ണ · Харе Кришна · ハレ・クリシュナ · Hare Krishna · हरे कृष्ण · হরে কৃষ্ণ · ஹரே கிருஷ்ணா · హరే కృష్ణ · હરે કૃષ્ણ</p>
+    <p class="nav-mantra-row">હરે કૃષ્ણ · ಹರೇ ಕೃಷ್ಣ · ਹਰੇ ਕ੍ਰਿਸ਼ਨ · ഹരേ കൃഷ്ണ · ହରେ କୃଷ୍ଣ · Харе Кришна · ハレ・クリシュナ · 하레 크리슈나 · 哈瑞奎师那 · Hare Kṛṣṇa · Hare Krishna · हरे कृष्ण · হরে কৃষ্ণ · ஹரே கிருஷ்ணா · హరే కృష్ణ · હરે કૃષ્ણ · ಹರೇ ಕೃಷ್ಣ · ਹਰੇ ਕ੍ਰਿਸ਼ਨ · ഹരേ കൃഷ്ണ · Харе Кришна · ハレ・クリシュナ · Hare Krishna · हरे कृष्ण · হরে কৃষ্ণ · ஹரே கிருஷ்ணா · హరే కృష్ణ · હરે કૃષ્ણ · ಹರೇ ಕೃಷ್ಣ</p>
+    <p class="nav-mantra-row">ಹರೇ ಕೃಷ್ಣ · ਹਰੇ ਕ੍ਰਿਸ਼ਨ · ഹരേ കൃഷ്ണ · ହରେ କୃଷ୍ଣ · Харе Кришна · ハレ・クリシュナ · 하레 크리슈나 · 哈瑞奎师那 · Hare Kṛṣṇa · Hare Krishna · हरे कृष्ण · হরে কৃষ্ণ · ஹரே கிருஷ்ணா · హరే కృష్ణ · હરે કૃષ્ણ · ಹರೇ ಕೃಷ್ಣ · ਹਰੇ ਕ੍ਰਿਸ਼ਨ · ഹരേ കൃഷ്ണ · Харе Кришна · ハレ・クリシュナ · Hare Krishna · हरे कृष्ण · হরে কৃষ্ণ · ஹரே கிருஷ்ணா · హరే కృష్ణ · હરે કૃષ્ણ · ಹರೇ ಕೃಷ್ಣ · ਹਰੇ ਕ੍ਰਿਸ਼ਨ</p>
+    <p class="nav-mantra-row">ਹਰੇ ਕ੍ਰਿਸ਼ਨ · ഹരേ കൃഷ്ണ · ହରେ କୃଷ୍ଣ · Харе Кришна · ハレ・クリシュナ · 하레 크리슈나 · 哈瑞奎师那 · Hare Kṛṣṇa · Hare Krishna · हरे कृष्ण · হরে কৃষ্ণ · ஹரே கிருஷ்ணா · హరే కృష్ణ · હરે કૃષ્ણ · ಹರೇ ಕೃಷ್ಣ · ਹਰੇ ਕ੍ਰਿਸ਼ਨ · ഹരേ കൃഷ്ണ · Харе Кришна · ハレ・クリシュナ · Hare Krishna · हरे कृष्ण · হরে কৃষ্ণ · ஹரே கிருஷ்ணா · హరే కృష్ణ · હરે કૃષ્ણ · ಹರೇ ಕೃಷ್ಣ · ਹਰੇ ਕ੍ਰਿਸ਼ਨ · ഹരേ കൃഷ്ണ</p>
+    <p class="nav-mantra-row">ഹരേ കൃഷ്ണ · ହରେ କୃଷ୍ଣ · Харе Кришна · ハレ・クリシュナ · 하레 크리슈나 · 哈瑞奎师那 · Hare Kṛṣṇa · Hare Krishna · हरे कृष्ण · হরে কৃষ্ণ · ஹரே கிருஷ்ணா · హరే కృష్ణ · હરે કૃષ્ણ · ಹರೇ ಕೃಷ್ಣ · ਹਰੇ ਕ੍ਰਿਸ਼ਨ · ഹരേ കൃഷ്ണ · Харе Кришна · ハレ・クリシュナ · Hare Krishna · हरे कृष्ण · হরে কৃষ্ণ · ஹரே கிருஷ்ணா · హరే కృష్ణ · હરે કૃષ્ણ · ಹರೇ ಕೃಷ್ಣ · ਹਰੇ ਕ੍ਰਿਸ਼ਨ · ഹരേ കൃഷ്ണ · ହରେ କୃଷ୍ଣ</p>
+  </div>
+  <div class="nav-inner">
     <a href="index.html" class="brand">
-      <img src="assets/images/logo-emblem.png" alt="Srila Prabhupada Logo" class="site-logo-icon">
-      <img src="assets/images/logo-text-header.png" alt="श्रील प्रभुपाद Srila Prabhupad" class="site-logo-text-img">
+      <img src="assets/images/logo-emblem.png" alt="" class="site-logo-icon" width="112" height="112">
+      <span class="brand-lockup">
+        <span class="brand-deva">श्रील प्रभुपाद</span>
+        <span class="brand-latin">Srila Prabhupad</span>
+      </span>
     </a>
-    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">☰</button>
-    <ul class="nav-links" id="navLinks">
-      <li><a href="index.html" aria-current="page">Home</a></li>
-      <li><a href="timeline.html">Timeline</a></li>
-      <li><a href="ask.html">Ask the Archive</a></li>
-      <li>
-        <select class="human-voice-select" title="Choose Human Narration Voice" aria-label="Human Voice Selector"></select>
-      </li>
-      <li class="translate-nav-item">
-        <div class="translate-widget" id="translateWidget">
-          <button type="button" class="translate-btn" id="translateBtn" aria-label="Select Language">
-            <span class="globe-icon">🌐</span>
-            <span id="currentLangLabel">Translate</span>
-            <span class="arrow-down">▾</span>
-          </button>
-          <div class="translate-dropdown" id="translateDropdown">
-            <div class="translate-quick-title">Quick Select Language</div>
-            <div class="translate-quick-btns">
-              <button type="button" class="lang-pill active" data-lang="en">English</button>
-              <button type="button" class="lang-pill" data-lang="hi">हिन्दी</button>
-              <button type="button" class="lang-pill" data-lang="bn">বাংলা</button>
-              <button type="button" class="lang-pill" data-lang="es">Español</button>
-              <button type="button" class="lang-pill" data-lang="fr">Français</button>
-              <button type="button" class="lang-pill" data-lang="de">Deutsch</button>
-              <button type="button" class="lang-pill" data-lang="ru">Русский</button>
-              <button type="button" class="lang-pill" data-lang="ja">日本語</button>
-            </div>
-            <div class="translate-select-wrap">
-              <label for="allLanguagesSelect">All Languages:</label>
-              <select id="allLanguagesSelect" class="lang-select">
-                <option value="">Choose Language...</option>
-                <option value="en">English</option>
-                <option value="hi">Hindi (हिन्दी)</option>
-                <option value="bn">Bengali (বাংলা)</option>
-                <option value="gu">Gujarati (ગુજરાતી)</option>
-                <option value="mr">Marathi (मराठी)</option>
-                <option value="ta">Tamil (தமிழ்)</option>
-                <option value="te">Telugu (తెలుగు)</option>
-                <option value="kn">Kannada (ಕನ್ನಡ)</option>
-                <option value="pa">Punjabi (ਪੰਜਾਬੀ)</option>
-                <option value="es">Spanish (Español)</option>
-                <option value="fr">French (Français)</option>
-                <option value="de">German (Deutsch)</option>
-                <option value="ru">Russian (Русский)</option>
-                <option value="zh-CN">Chinese (中文)</option>
-                <option value="ja">Japanese (日本語)</option>
-                <option value="pt">Portuguese (Português)</option>
-                <option value="it">Italian (Italiano)</option>
-                <option value="ar">Arabic (العربية)</option>
-              </select>
+    <button type="button" class="sq-btn sq-btn--ghost nav-toggle" id="navToggle" aria-label="Open menu" aria-expanded="false" aria-controls="navLinks">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      <span class="sq-btn__glow" aria-hidden="true"></span>
+    </button>
+    <div class="nav-panel" id="navLinks">
+      <div class="nav-panel-top">
+        <p class="micro-label">Menu</p>
+        <button type="button" class="sq-btn sq-btn--ghost nav-close" id="navClose" aria-label="Close menu">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          <span class="sq-btn__glow" aria-hidden="true"></span>
+        </button>
+      </div>
+      <ul class="nav-list">
+        <li><a href="index.html" class="sq-btn sq-btn--secondary" aria-current="page">Home<span class="sq-btn__glow" aria-hidden="true"></span></a></li>
+        <li><a href="timeline.html" class="sq-btn sq-btn--ghost">Timeline<span class="sq-btn__glow" aria-hidden="true"></span></a></li>
+        <li><a href="ask.html" class="sq-btn sq-btn--ghost">Ask the Archive<span class="sq-btn__glow" aria-hidden="true"></span></a></li>
+        <li>
+          <select class="human-voice-select" title="Choose narration voice" aria-label="Human Voice Selector"></select>
+        </li>
+        <li class="translate-nav-item">
+          <div class="translate-widget" id="translateWidget">
+            <button type="button" class="sq-btn sq-btn--ghost translate-btn" id="translateBtn" aria-label="Select Language">
+              Translate
+              <span class="sq-btn__glow" aria-hidden="true"></span>
+            </button>
+            <div class="translate-dropdown" id="translateDropdown">
+              <div class="translate-quick-title">Quick Select Language</div>
+              <div class="translate-quick-btns">
+                <button type="button" class="sq-btn sq-btn--ghost lang-pill active" data-lang="en">English<span class="sq-btn__glow" aria-hidden="true"></span></button>
+                <button type="button" class="sq-btn sq-btn--ghost lang-pill" data-lang="hi">हिन्दी<span class="sq-btn__glow" aria-hidden="true"></span></button>
+                <button type="button" class="sq-btn sq-btn--ghost lang-pill" data-lang="bn">বাংলা<span class="sq-btn__glow" aria-hidden="true"></span></button>
+                <button type="button" class="sq-btn sq-btn--ghost lang-pill" data-lang="es">Español<span class="sq-btn__glow" aria-hidden="true"></span></button>
+                <button type="button" class="sq-btn sq-btn--ghost lang-pill" data-lang="fr">Français<span class="sq-btn__glow" aria-hidden="true"></span></button>
+                <button type="button" class="sq-btn sq-btn--ghost lang-pill" data-lang="de">Deutsch<span class="sq-btn__glow" aria-hidden="true"></span></button>
+                <button type="button" class="sq-btn sq-btn--ghost lang-pill" data-lang="ru">Русский<span class="sq-btn__glow" aria-hidden="true"></span></button>
+                <button type="button" class="sq-btn sq-btn--ghost lang-pill" data-lang="ja">日本語<span class="sq-btn__glow" aria-hidden="true"></span></button>
+              </div>
+              <div class="translate-select-wrap">
+                <label for="allLanguagesSelect">All Languages:</label>
+                <select id="allLanguagesSelect" class="lang-select">
+                  <option value="">Choose Language...</option>
+                  <option value="en">English</option>
+                  <option value="hi">Hindi (हिन्दी)</option>
+                  <option value="bn">Bengali (বাংলা)</option>
+                  <option value="gu">Gujarati (ગુજરાતી)</option>
+                  <option value="mr">Marathi (मराठी)</option>
+                  <option value="ta">Tamil (தமிழ்)</option>
+                  <option value="te">Telugu (తెలుగు)</option>
+                  <option value="kn">Kannada (ಕನ್ನಡ)</option>
+                  <option value="pa">Punjabi (ਪੰਜਾਬੀ)</option>
+                  <option value="es">Spanish (Español)</option>
+                  <option value="fr">French (Français)</option>
+                  <option value="de">German (Deutsch)</option>
+                  <option value="ru">Russian (Русский)</option>
+                  <option value="zh-CN">Chinese (中文)</option>
+                  <option value="ja">Japanese (日本語)</option>
+                  <option value="pt">Portuguese (Português)</option>
+                  <option value="it">Italian (Italiano)</option>
+                  <option value="ar">Arabic (العربية)</option>
+                </select>
+              </div>
             </div>
           </div>
-        </div>
-      </li>
-    </ul>
+        </li>
+      </ul>
+    </div>
   </div>
 </nav>
+<div class="nav-sentinel" id="navSentinel" aria-hidden="true"></div>
 
-<!-- Hidden element for Google Translate widget -->
 <div id="google_translate_element" style="display:none;"></div>
 
-<!-- ============ HERO ============ -->
 <header class="hero">
-  <div class="wrap hero-grid">
-    <div>
-      <div class="hero-kicker">
-        <img src="assets/images/logo-emblem.png" alt="Logo" class="section-logo-icon">
-        <span class="eyebrow">A Living Archive</span>
-      </div>
-      <h1>PRABHUPAD<br><em>SHIKSHA</em></h1>
-      <p class="lede" id="heroSummaryText">
-        At sixty-nine, with almost no money and no contacts, he sailed alone to America
-        to fulfill a promise made forty years earlier. By the time he passed away in 1977,
-        that promise had become a movement spanning six continents. This archive holds
-        the record of that life — year by year, and a place to still ask about it.
-      </p>
-      <div class="hero-actions">
-        <a href="timeline.html" class="btn btn-primary">Walk the Timeline</a>
-        <a href="ask.html" class="btn btn-ghost">Ask the Archive</a>
-        <button type="button" class="audio-narration-btn" onclick="speakText(document.getElementById('heroSummaryText').innerText, this)">
-          <span>🔊</span> <span class="audio-btn-label">Listen</span>
-        </button>
-      </div>
-    </div>
-
-    <!-- Portrait: Clean frame with emblem watermark placeholder -->
-    <div class="portrait-frame">
-      <div class="inner">
-        <img
-          src="assets/images/portrait-main.jpg"
-          alt=""
-        >
-      </div>
+  <div class="hero-block">
+    <h1 class="hero-wordmark">
+      <span class="hero-wordmark__prabhupad">PRABHUPAD</span>
+      <span class="hero-wordmark__shiksha">SHIKSHA</span>
+    </h1>
+    <p class="micro-label hero-kicker">A living archive</p>
+    <img class="hero-peek" src="assets/images/krishna-peek.png?v=20260903-b" alt="" width="673" height="498" aria-hidden="true">
+  </div>
+  <div class="hero-follow">
+    <p class="lede" id="heroSummaryText">
+      At sixty-nine, with almost no money and no contacts, he sailed alone to America
+      to fulfill a promise made forty years earlier. By the time he passed away in 1977,
+      that promise had become a movement spanning six continents. This archive holds
+      the record of that life — year by year, and a place to still ask about it.
+    </p>
+    <div class="hero-actions">
+      <a href="timeline.html" class="sq-btn sq-btn--primary">Walk the Timeline<span class="sq-btn__glow" aria-hidden="true"></span></a>
+      <a href="ask.html" class="sq-btn sq-btn--secondary">Ask the Archive<span class="sq-btn__glow" aria-hidden="true"></span></a>
+      <button type="button" class="sq-btn sq-btn--ghost sq-btn--listen audio-narration-btn" aria-label="Listen to the introduction" onclick="speakText(document.getElementById('heroSummaryText').innerText, this)">
+        <svg class="listen-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M11 5L6 9H3v6h3l5 4V5z" fill="currentColor"/><path d="M15.54 8.46a5 5 0 010 7.07M18.07 5.93a9 9 0 010 12.14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        Listen
+        <span class="sq-btn__glow" aria-hidden="true"></span>
+      </button>
     </div>
   </div>
+  <figure class="hero-portrait">
+    <img src="assets/images/portrait-main.jpg" alt="Srila Prabhupada seated in saffron robes" width="713" height="670">
+  </figure>
 </header>
 
-<!-- ============ ERAS ============ -->
-<section id="eras">
+<section id="eras" class="seasons">
   <div class="wrap">
-    <div class="section-head">
-      <div class="divider"><img src="assets/images/logo-emblem.png" alt="Logo" class="divider-logo-icon"></div>
+    <header class="section-head">
       <h2>A Life in Three Seasons</h2>
       <p>The full record lives on the Timeline. Here is the shape of it.</p>
-    </div>
-    <div class="eras">
-      <div class="era">
-        <div class="years">1896 – 1965</div>
-        <h3>Preparation</h3>
-        <p id="era1Text">Born in Calcutta, married, and set on his path by a single instruction from his spiritual master in 1922. Nearly forty years of writing, translating, and waiting followed before he ever left India.</p>
-        <button type="button" class="audio-narration-btn" style="margin-top:16px;" onclick="speakText(document.getElementById('era1Text').innerText, this)">
-          <span>🔊</span> <span class="audio-btn-label">Listen</span>
-        </button>
-      </div>
-      <div class="era">
-        <div class="years">1965 – 1971</div>
-        <h3>The Voyage West</h3>
-        <p id="era2Text">At sixty-nine, he sailed to America alone. A storefront in New York became ISKCON; a handful of young Americans became the first disciples of a movement that spread to San Francisco, London, and beyond within five years.</p>
-        <button type="button" class="audio-narration-btn" style="margin-top:16px;" onclick="speakText(document.getElementById('era2Text').innerText, this)">
-          <span>🔊</span> <span class="audio-btn-label">Listen</span>
-        </button>
-      </div>
-      <div class="era">
-        <div class="years">1972 – 1977</div>
-        <h3>A Worldwide Mission</h3>
-        <p id="era3Text">Temples, books, and disciples multiplied across six continents. By his passing in 1977, what began with two followers and $200 had grown into over 100 centers worldwide.</p>
-        <button type="button" class="audio-narration-btn" style="margin-top:16px;" onclick="speakText(document.getElementById('era3Text').innerText, this)">
-          <span>🔊</span> <span class="audio-btn-label">Listen</span>
-        </button>
-      </div>
-    </div>
+    </header>
   </div>
+  <article class="era era--paper">
+    <div class="wrap">
+      <span class="era-num" aria-hidden="true">01</span>
+      <h3>Preparation</h3>
+      <p class="micro-label years">1896 – 1965</p>
+      <hr class="hairline">
+      <p id="era1Text">Born in Calcutta on Tuesday, September 1, 1896, married, and set on his path by a single instruction from his spiritual master in 1922. Nearly forty years of writing, translating, and waiting followed before he ever left India.</p>
+      <button type="button" class="sq-btn sq-btn--ghost sq-btn--listen audio-narration-btn" aria-label="Listen to Preparation" onclick="speakText(document.getElementById('era1Text').innerText, this)">
+        <svg class="listen-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M11 5L6 9H3v6h3l5 4V5z" fill="currentColor"/><path d="M15.54 8.46a5 5 0 010 7.07M18.07 5.93a9 9 0 010 12.14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        Listen
+        <span class="sq-btn__glow" aria-hidden="true"></span>
+      </button>
+    </div>
+  </article>
+  <article class="era era--deep">
+    <div class="wrap">
+      <span class="era-num" aria-hidden="true">02</span>
+      <h3>The Voyage West</h3>
+      <p class="micro-label years">1965 – 1971</p>
+      <hr class="hairline">
+      <p id="era2Text">At sixty-nine, he sailed to America alone. A storefront in New York became ISKCON; a handful of young Americans became the first disciples of a movement that spread to San Francisco, London, and beyond within five years.</p>
+      <button type="button" class="sq-btn sq-btn--ghost sq-btn--listen audio-narration-btn" aria-label="Listen to The Voyage West" onclick="speakText(document.getElementById('era2Text').innerText, this)">
+        <svg class="listen-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M11 5L6 9H3v6h3l5 4V5z" fill="currentColor"/><path d="M15.54 8.46a5 5 0 010 7.07M18.07 5.93a9 9 0 010 12.14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        Listen
+        <span class="sq-btn__glow" aria-hidden="true"></span>
+      </button>
+    </div>
+  </article>
+  <article class="era era--paper">
+    <div class="wrap">
+      <span class="era-num" aria-hidden="true">03</span>
+      <h3>A Worldwide Mission</h3>
+      <p class="micro-label years">1972 – 1977</p>
+      <hr class="hairline">
+      <p id="era3Text">Temples, books, and disciples multiplied across six continents. By his passing in 1977, what began with two followers and $200 had grown into over 100 centers worldwide.</p>
+      <button type="button" class="sq-btn sq-btn--ghost sq-btn--listen audio-narration-btn" aria-label="Listen to A Worldwide Mission" onclick="speakText(document.getElementById('era3Text').innerText, this)">
+        <svg class="listen-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M11 5L6 9H3v6h3l5 4V5z" fill="currentColor"/><path d="M15.54 8.46a5 5 0 010 7.07M18.07 5.93a9 9 0 010 12.14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        Listen
+        <span class="sq-btn__glow" aria-hidden="true"></span>
+      </button>
+    </div>
+  </article>
 </section>
 
-<!-- ============ PHOTOGRAPHS — shrine wall ============ -->
 <section id="photographs">
   <div class="wrap">
-    <div class="section-head">
-      <div class="divider"><img src="assets/images/logo-emblem.png" alt="Logo" class="divider-logo-icon"></div>
+    <header class="section-head">
       <h2>Photographs</h2>
       <p>Historical photographs preserved from the living archive of His Divine Grace.</p>
-    </div>
-
-    <div class="gallery" id="photoGallery">
-      <figure class="gallery-item"><img src="assets/images/photo-01.jpg" alt="" loading="lazy" decoding="async"></figure>
-      <figure class="gallery-item"><img src="assets/images/photo-02.jpg" alt="" loading="lazy" decoding="async"></figure>
-      <figure class="gallery-item"><img src="assets/images/photo-03.jpg" alt="" loading="lazy" decoding="async"></figure>
-      <figure class="gallery-item"><img src="assets/images/photo-04.jpg" alt="" loading="lazy" decoding="async"></figure>
-      <figure class="gallery-item"><img src="assets/images/photo-05.jpg" alt="" loading="lazy" decoding="async"></figure>
-      <figure class="gallery-item"><img src="assets/images/photo-06.jpg" alt="" loading="lazy" decoding="async"></figure>
-    </div>
+    </header>
+  </div>
+  <div class="gallery" id="photoGallery">
+    <figure class="gallery-item"><img src="assets/images/photo-01.jpg" alt="Historical photograph of Srila Prabhupada from the archive" width="641" height="723" loading="lazy" decoding="async"></figure>
+    <figure class="gallery-item"><img src="assets/images/photo-02.jpg" alt="Historical photograph of Srila Prabhupada from the archive" width="475" height="716" loading="lazy" decoding="async"></figure>
+    <figure class="gallery-item"><img src="assets/images/photo-03.jpg" alt="Historical photograph of Srila Prabhupada from the archive" width="442" height="672" loading="lazy" decoding="async"></figure>
+    <figure class="gallery-item"><img src="assets/images/photo-04.jpg" alt="Historical photograph of Srila Prabhupada from the archive" width="850" height="707" loading="lazy" decoding="async"></figure>
+    <figure class="gallery-item"><img src="assets/images/photo-05.jpg" alt="Historical photograph of Srila Prabhupada from the archive" width="887" height="581" loading="lazy" decoding="async"></figure>
+    <figure class="gallery-item"><img src="assets/images/photo-06.jpg" alt="Historical photograph of Srila Prabhupada from the archive" width="713" height="670" loading="lazy" decoding="async"></figure>
   </div>
 </section>
 
-<!-- ============ VOICES ============ -->
 <section id="voices">
   <div class="wrap">
-    <div class="section-head">
-      <div class="divider"><img src="assets/images/logo-emblem.png" alt="Logo" class="divider-logo-icon"></div>
+    <header class="section-head">
       <h2>Recognition</h2>
       <p>How his work was received, beyond his own movement.</p>
-    </div>
+    </header>
     <div class="voices">
-      <div class="voice">
+      <blockquote class="voice">
         <p class="quote" id="quote1">Poet Allen Ginsberg, an early observer of the storefront temple, described his Bhagavad-gita translation as unusually clear and thoroughly grounded in scholarship.</p>
-        <p class="who">— Allen Ginsberg, poet</p>
-        <button type="button" class="audio-narration-btn" style="margin-top:12px;" onclick="speakText(document.getElementById('quote1').innerText, this)">
-          <span>🔊</span> <span class="audio-btn-label">Listen</span>
+        <footer class="who">Allen Ginsberg, poet</footer>
+        <button type="button" class="sq-btn sq-btn--ghost sq-btn--listen audio-narration-btn" aria-label="Listen to the Allen Ginsberg note" onclick="speakText(document.getElementById('quote1').innerText, this)">
+          <svg class="listen-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M11 5L6 9H3v6h3l5 4V5z" fill="currentColor"/><path d="M15.54 8.46a5 5 0 010 7.07M18.07 5.93a9 9 0 010 12.14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          Listen
+          <span class="sq-btn__glow" aria-hidden="true"></span>
         </button>
-      </div>
-      <div class="voice">
+      </blockquote>
+      <blockquote class="voice">
         <p class="quote" id="quote2">Religious studies scholars including J. Stillson Judah and Thomas Hopkins defended his translations as serious scholarship, pushing back against media portrayals of the movement as a cult.</p>
-        <p class="who">— Religious studies scholars</p>
-        <button type="button" class="audio-narration-btn" style="margin-top:12px;" onclick="speakText(document.getElementById('quote2').innerText, this)">
-          <span>🔊</span> <span class="audio-btn-label">Listen</span>
+        <footer class="who">Religious studies scholars</footer>
+        <button type="button" class="sq-btn sq-btn--ghost sq-btn--listen audio-narration-btn" aria-label="Listen to the scholars note" onclick="speakText(document.getElementById('quote2').innerText, this)">
+          <svg class="listen-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M11 5L6 9H3v6h3l5 4V5z" fill="currentColor"/><path d="M15.54 8.46a5 5 0 010 7.07M18.07 5.93a9 9 0 010 12.14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          Listen
+          <span class="sq-btn__glow" aria-hidden="true"></span>
         </button>
-      </div>
-      <div class="voice">
+      </blockquote>
+      <blockquote class="voice">
         <p class="quote" id="quote3">By 1977, the movement he'd started alone in a rented storefront had grown into more than 100 temples and centers on six continents.</p>
-        <p class="who">— ISKCON historical record</p>
-        <button type="button" class="audio-narration-btn" style="margin-top:12px;" onclick="speakText(document.getElementById('quote3').innerText, this)">
-          <span>🔊</span> <span class="audio-btn-label">Listen</span>
+        <footer class="who">ISKCON historical record</footer>
+        <button type="button" class="sq-btn sq-btn--ghost sq-btn--listen audio-narration-btn" aria-label="Listen to the historical record note" onclick="speakText(document.getElementById('quote3').innerText, this)">
+          <svg class="listen-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M11 5L6 9H3v6h3l5 4V5z" fill="currentColor"/><path d="M15.54 8.46a5 5 0 010 7.07M18.07 5.93a9 9 0 010 12.14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          Listen
+          <span class="sq-btn__glow" aria-hidden="true"></span>
         </button>
-      </div>
+      </blockquote>
     </div>
   </div>
 </section>
 
-<!-- ============ ASK CTA ============ -->
-<section id="ask-preview">
+<section id="ask-preview" class="ask-cta">
   <div class="wrap">
-    <div class="ask-cta">
-      <img src="assets/images/logo-emblem.png" alt="Srila Prabhupada Archive Emblem Logo" class="cta-logo-icon">
-      <h2>Have a question for the archive?</h2>
-      <p>Ask about a moment, a year, or a teaching — the archive draws its answers from the full record of Srila Prabhupada's life and lectures.</p>
-      <a href="ask.html" class="btn btn-primary">Ask the Archive →</a>
-    </div>
+    <h2>Have a question for the archive?</h2>
+    <p>Ask about a moment, a year, or a teaching — the archive draws its answers from the full record of Srila Prabhupada's life and lectures.</p>
+    <a href="ask.html" class="sq-btn sq-btn--primary">Ask the Archive<span class="sq-btn__glow" aria-hidden="true"></span></a>
   </div>
 </section>
 
 <footer>
-  <div class="wrap">
+  <div class="wrap footer-inner">
     <div class="brand-mini">
-      <img src="assets/images/logo-emblem.png" alt="" class="footer-logo-icon">
-      <img src="assets/images/logo-text-header.png" alt="Srila Prabhupad" class="site-logo-text-img" style="height:36px;">
+      <img src="assets/images/logo-emblem.png" alt="" class="footer-logo-icon" width="36" height="36">
+      <span class="brand-lockup">
+        <span class="brand-deva">श्रील प्रभुपाद</span>
+        <span class="brand-latin">Srila Prabhupad</span>
+      </span>
     </div>
-    <div class="brand-mini">Kept for those who still ask.</div>
+    <div class="footer-contact">
+      <p class="footer-kicker">Contact</p>
+      <p class="footer-contact-name">Madhusudan</p>
+      <a class="footer-mail" href="mailto:awaytotheway@gmail.com">awaytotheway@gmail.com</a>
+    </div>
+    <div class="footer-meta">
+      <p class="footer-line">Kept for those who still ask.</p>
+      <p class="footer-copy">© 2026 PRABHUPAD SHIKSHA. All rights reserved.</p>
+    </div>
   </div>
 </footer>
 
 <script src="js/config.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script src="js/auth.js"></script>
-<script src="js/audio.js"></script>
-<script src="js/main.js?v=20260901-phone5"></script></script>
-<script src="js/notes.js"></script>
+<script src="js/auth.js?v=20260902-e"></script>
+<script src="js/audio.js?v=20260903-h"></script>
+<script src="js/main.js?v=20260902-g"></script>
+<script src="js/notes.js?v=20260903-i"></script>
 <script src="js/privacy.js"></script>
 <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 </body>
 </html>
-
