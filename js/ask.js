@@ -93,11 +93,6 @@ function appendMessage(role, text, pending = false) {
   const msg = document.createElement("div");
   msg.className = `msg from-${role}${pending ? " pending" : ""}`;
 
-  let audioHtml = "";
-  if (role === "archive" && !pending) {
-    audioHtml = `<button type="button" class="audio-narration-btn" style="margin-top:10px;" onclick="speakText(this.previousElementSibling.innerText, this)"><span>🔊</span> <span class="audio-btn-label">Listen</span></button>`;
-  }
-
   const bubbleContent = pending
     ? `<div class="loader-spinner"><div class="inner one"></div><div class="inner two"></div><div class="inner three"></div></div>`
     : escapeHtml(text);
@@ -105,7 +100,6 @@ function appendMessage(role, text, pending = false) {
   msg.innerHTML = `
     <span class="label">${role === "visitor" ? "You" : "The Archive"}</span>
     <div class="bubble${pending ? ' bubble--loading' : ''}">${bubbleContent}</div>
-    ${audioHtml}
   `;
   log.appendChild(msg);
   log.scrollTop = log.scrollHeight;
@@ -142,6 +136,7 @@ async function handleAsk() {
 document.addEventListener("DOMContentLoaded", () => {
   const input = document.getElementById("chatInput");
   const sendBtn = document.getElementById("chatSend");
+  const micBtn = document.getElementById("chatMic");
 
   sendBtn.addEventListener("click", handleAsk);
   input.addEventListener("keydown", (e) => {
@@ -153,5 +148,56 @@ document.addEventListener("DOMContentLoaded", () => {
   input.addEventListener("input", () => {
     input.style.height = "auto";
     input.style.height = Math.min(input.scrollHeight, 140) + "px";
+  });
+
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!micBtn) return;
+  if (!SpeechRecognition) {
+    micBtn.hidden = true;
+    return;
+  }
+
+  const recognition = new SpeechRecognition();
+  recognition.lang = (document.documentElement.lang || "en-IN");
+  recognition.interimResults = true;
+  recognition.continuous = false;
+  let listening = false;
+  let baseText = "";
+
+  function setListening(on) {
+    listening = on;
+    micBtn.classList.toggle("listening", on);
+    micBtn.setAttribute("aria-pressed", String(on));
+    micBtn.setAttribute("aria-label", on ? "Stop listening" : "Speak your question");
+  }
+
+  recognition.onresult = (event) => {
+    let finalText = "";
+    let interim = "";
+    for (let i = 0; i < event.results.length; i++) {
+      const piece = event.results[i][0].transcript;
+      if (event.results[i].isFinal) finalText += piece;
+      else interim += piece;
+    }
+    const spoken = (finalText || interim).trim();
+    input.value = [baseText, spoken].filter(Boolean).join(" ").trim();
+    input.dispatchEvent(new Event("input"));
+  };
+  recognition.onerror = () => setListening(false);
+  recognition.onend = () => setListening(false);
+
+  micBtn.addEventListener("click", () => {
+    if (listening) {
+      recognition.stop();
+      setListening(false);
+      return;
+    }
+    baseText = input.value.trim();
+    try {
+      recognition.start();
+      setListening(true);
+    } catch (err) {
+      setListening(false);
+    }
   });
 });
