@@ -291,10 +291,7 @@
     if (document.getElementById('notesNavItem')) return;
     var navLinks = document.getElementById('navLinks');
     if (!navLinks) return;
-    // Insert before translate item to keep nav compact
     var anchor = document.querySelector('.translate-nav-item');
-    var authItem = document.getElementById('authNavItem');
-    if (authItem) authItem.remove();
     var li = document.createElement('li');
     li.id = 'notesNavItem';
     li.className = 'notes-nav-item';
