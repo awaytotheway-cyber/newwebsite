@@ -168,7 +168,7 @@
     var corner = document.getElementById('authCornerSignIn');
     if (corner) {
       corner.disabled = false;
-      corner.innerHTML = G_SVG + '<span>Sign in</span><span class="sq-btn__glow" aria-hidden="true"></span>';
+      corner.textContent = 'Sign In';
     }
   }
 
@@ -213,75 +213,51 @@
   }
 
   function _renderCornerWidget(user) {
+    var header = document.getElementById('authHeaderSlot');
     var wrap = document.getElementById('authCornerWidget');
-    if (!wrap) return;
+    var leftover = document.getElementById('authCorner');
+    if (leftover) leftover.remove();
 
     if (!_configured) {
-      wrap.hidden = true;
-      wrap.innerHTML = '';
+      if (header) { header.hidden = true; header.innerHTML = ''; }
+      if (wrap) { wrap.hidden = true; wrap.innerHTML = ''; }
       return;
     }
-
-    wrap.hidden = false;
 
     if (user) {
+      if (header) {
+        header.hidden = true;
+        header.innerHTML = '';
+      }
+      if (!wrap) return;
+      wrap.hidden = false;
+      var navItem = document.getElementById('authNavItem');
+      if (navItem) navItem.hidden = false;
       var meta = user.user_metadata || {};
       var name = meta.full_name || meta.name || user.email || 'User';
-      var avatar = meta.avatar_url || meta.picture || '';
-      var first = name.split(' ')[0];
-
       wrap.innerHTML =
-        '<div class="auth-widget-wrap">' +
-          '<button type="button" class="sq-btn sq-btn--ghost auth-avatar-btn" id="authUserBtn" aria-label="My account" aria-haspopup="menu" aria-expanded="false" aria-controls="authDropdown">' +
-            (avatar
-              ? '<img src="' + _esc(avatar) + '" alt="" class="auth-avatar-img" width="22" height="22" referrerpolicy="no-referrer">'
-              : '<span class="auth-avatar-initials">' + _esc(first.charAt(0).toUpperCase()) + '</span>') +
-            '<span class="auth-user-name">' + _esc(first) + '</span>' +
-            '<svg class="auth-chevron" width="10" height="8" viewBox="0 0 12 8" aria-hidden="true"><path d="M1.2 1.2L6 6l4.8-4.8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>' +
-            '<span class="sq-btn__glow" aria-hidden="true"></span>' +
-          '</button>' +
-          '<div class="auth-dropdown" id="authDropdown" role="menu">' +
-            '<p class="auth-dropdown-name">' + _esc(name) + '</p>' +
-            '<p class="auth-dropdown-email">' + _esc(user.email || '') + '</p>' +
-            '<div class="auth-dropdown-divider"></div>' +
-            '<button type="button" class="sq-btn sq-btn--ghost auth-dropdown-btn" id="authSignOutBtn" role="menuitem">Sign out<span class="sq-btn__glow" aria-hidden="true"></span></button>' +
-          '</div>' +
-        '</div>';
-
-      var btn = document.getElementById('authUserBtn');
-      var dd = document.getElementById('authDropdown');
-      if (btn && dd) {
-        btn.addEventListener('click', function (e) {
-          e.preventDefault();
-          e.stopPropagation();
-          var open = !dd.classList.contains('open');
-          dd.classList.toggle('open', open);
-          btn.setAttribute('aria-expanded', open ? 'true' : 'false');
-        });
-      }
+        '<p class="auth-menu-name">' + _esc(name) + '</p>' +
+        '<button type="button" class="sq-btn sq-btn--ghost auth-menu-signout" id="authSignOutBtn">Sign out<span class="sq-btn__glow" aria-hidden="true"></span></button>';
       var soBtn = document.getElementById('authSignOutBtn');
-      if (soBtn) {
-        soBtn.addEventListener('click', function (e) {
-          e.stopPropagation();
-          _closeDropdown();
-          signOut();
-        });
-      }
+      if (soBtn) soBtn.addEventListener('click', signOut);
       return;
     }
 
-    wrap.innerHTML =
-      '<button class="sq-btn sq-btn--ghost auth-corner-signin" id="authCornerSignIn" type="button" aria-label="Sign in">' +
-        G_SVG +
-        '<span>Sign in</span>' +
-        '<span class="sq-btn__glow" aria-hidden="true"></span>' +
-      '</button>';
-
+    if (wrap) {
+      wrap.hidden = true;
+      wrap.innerHTML = '';
+    }
+    var navItem = document.getElementById('authNavItem');
+    if (navItem) navItem.hidden = true;
+    if (!header) return;
+    header.hidden = false;
+    header.innerHTML =
+      '<button type="button" class="auth-header-signin" id="authCornerSignIn">Sign In</button>';
     var signBtn = document.getElementById('authCornerSignIn');
     if (signBtn) {
       signBtn.addEventListener('click', function () {
         signBtn.disabled = true;
-        signBtn.innerHTML = '<span class="auth-btn-spinner"></span><span>Signing in…</span>';
+        signBtn.textContent = 'Signing in…';
         signIn();
         setTimeout(_resetGoogleBtn, 12000);
       });
@@ -289,21 +265,27 @@
   }
 
   function _injectCornerWidget() {
-    if (document.getElementById('authCornerWidget')) return;
+    var leftover = document.getElementById('authCorner');
+    if (leftover) leftover.remove();
+
     var inner = document.querySelector('.nav-inner');
-    if (inner) {
-      var el = document.createElement('div');
-      el.id = 'authNavItem';
-      el.className = 'auth-nav-item';
-      el.innerHTML = '<div id="authCornerWidget" class="auth-corner-widget"></div>';
-      inner.appendChild(el);
-      return;
+    if (inner && !document.getElementById('authHeaderSlot')) {
+      var slot = document.createElement('div');
+      slot.id = 'authHeaderSlot';
+      slot.className = 'auth-header-slot';
+      inner.insertBefore(slot, inner.firstChild);
     }
-    var fallback = document.createElement('div');
-    fallback.id = 'authCorner';
-    fallback.className = 'auth-corner';
-    fallback.innerHTML = '<div id="authCornerWidget" class="auth-corner-widget"></div>';
-    document.body.appendChild(fallback);
+
+    if (!document.getElementById('authCornerWidget')) {
+      var panel = document.getElementById('navLinks');
+      if (panel) {
+        var el = document.createElement('div');
+        el.id = 'authNavItem';
+        el.className = 'auth-nav-item';
+        el.innerHTML = '<div id="authCornerWidget" class="auth-corner-widget"></div>';
+        panel.appendChild(el);
+      }
+    }
   }
 
   function showAuthModal() {
