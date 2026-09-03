@@ -12,18 +12,73 @@
   var _panelOpen     = false;
   var _selectionData = null;  // captured { text, sourceContext }
   var _pendingSave   = null;  // payload awaiting auth
+  var _sessionId     = 'default';
+  var _sessions      = [];
+  var SESSION_KEY    = 'prabhupadNotesSession';
+  var SESSIONS_KEY   = 'prabhupadNotesSessions';
 
-  function _formatMessage(text, context) {
-    if (context) return '[' + context + ']\n\n' + text;
-    return text;
+  function _loadSessionState() {
+    try {
+      _sessionId = localStorage.getItem(SESSION_KEY) || 'default';
+      _sessions = JSON.parse(localStorage.getItem(SESSIONS_KEY) || '[]');
+    } catch (e) {
+      _sessionId = 'default';
+      _sessions = [];
+    }
+    if (!Array.isArray(_sessions)) _sessions = [];
+    if (!_sessions.length) {
+      _sessions = [{ id: 'default', name: 'Earlier notes', created_at: new Date().toISOString() }];
+    }
+    if (!_sessions.some(function (s) { return s.id === _sessionId; })) {
+      _sessions.unshift({
+        id: _sessionId,
+        name: _sessionId === 'default' ? 'Earlier notes' : 'Current session',
+        created_at: new Date().toISOString()
+      });
+    }
+    _persistSessions();
+  }
+
+  function _persistSessions() {
+    try {
+      localStorage.setItem(SESSIONS_KEY, JSON.stringify(_sessions));
+      localStorage.setItem(SESSION_KEY, _sessionId);
+    } catch (e) {}
+  }
+
+  function _sessionLabel(iso) {
+    return new Date(iso || Date.now()).toLocaleString('en-IN', {
+      day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit'
+    });
+  }
+
+  function _rememberSession(id, name, createdAt) {
+    if (!id) return;
+    if (_sessions.some(function (s) { return s.id === id; })) return;
+    _sessions.push({
+      id: id,
+      name: name || (id === 'default' ? 'Earlier notes' : _sessionLabel(createdAt)),
+      created_at: createdAt || new Date().toISOString()
+    });
+    _persistSessions();
+  }
+
+  function _formatMessage(text, context, sessionId) {
+    var sid = sessionId || _sessionId || 'default';
+    if (context) return '[s:' + sid + '|' + context + ']\n\n' + text;
+    return '[s:' + sid + ']\n\n' + text;
   }
 
   function _parseMessage(raw) {
+    var tagged = /^\[s:([^\]|]+)(?:\|([^\]]*))?\]\n\n([\s\S]*)$/.exec(raw || '');
+    if (tagged) {
+      return { session_id: tagged[1], source_context: tagged[2] || '', content: tagged[3] };
+    }
     var match = /^\[([^\]]+)\]\n\n([\s\S]*)$/.exec(raw || '');
     if (match) {
-      return { source_context: match[1], content: match[2] };
+      return { session_id: 'default', source_context: match[1], content: match[2] };
     }
-    return { source_context: '', content: raw || '' };
+    return { session_id: 'default', source_context: '', content: raw || '' };
   }
 
   function _rowToNote(row) {
@@ -32,6 +87,7 @@
       id: row.id,
       content: parsed.content,
       source_context: parsed.source_context,
+      session_id: parsed.session_id || 'default',
       created_at: row.created_at
     };
   }
@@ -64,11 +120,13 @@
     _notes = [];
 
     if (!auth || !auth.configured) {
+      _renderSessionSelect();
       _renderAll();
       return;
     }
 
     if (!auth.user || !auth.client) {
+      _renderSessionSelect();
       _renderAll();
       return;
     }
@@ -80,9 +138,16 @@
         .eq('role', 'user')
         .order('created_at', { ascending: false });
       if (!res.error && res.data) {
-        _notes = res.data.map(_rowToNote);
+        var all = res.data.map(_rowToNote);
+        all.forEach(function (n) {
+          _rememberSession(n.session_id, null, n.created_at);
+        });
+        _notes = all.filter(function (n) {
+          return (n.session_id || 'default') === _sessionId;
+        });
       }
     } catch (e) {}
+    _renderSessionSelect();
     _renderAll();
   }
 
@@ -98,7 +163,7 @@
       var res = await auth.client
         .from('messages')
         .insert({
-          message: _formatMessage(note.content, note.source_context),
+          message: _formatMessage(note.content, note.source_context, note.session_id),
           role: 'user'
         })
         .select('id, created_at')
@@ -142,12 +207,13 @@
 
   /* ── DOM Injection ──────────────────────────────────────────────── */
   function _buildPanelHTML() {
-    var clipSVG = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><line x1="9" y1="12" x2="15" y2="12"/><line x1="9" y1="16" x2="13" y2="16"/></svg>';
+    var notesSVG = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.4 3.6a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4 12.4-12.4z"/></svg>';
 
     return (
       /* ── edge tab ── */
-      '<div id="notesTab" class="notes-tab" role="button" tabindex="0" aria-label="Open notes panel" title="Open Notes">' +
-        clipSVG +
+      '<div id="notesTab" class="notes-tab" role="button" tabindex="0" aria-label="Open notes" title="Notes">' +
+        '<span class="notes-tab-icon" aria-hidden="true">' + notesSVG + '</span>' +
+        '<span class="notes-tab-label">Notes</span>' +
         '<span class="notes-tab-badge" id="notesTabBadge">0</span>' +
       '</div>' +
 
@@ -155,11 +221,13 @@
       '<aside id="notesPanel" class="notes-panel" aria-label="Notes" role="complementary">' +
         '<div class="notes-panel-header">' +
           '<div class="notes-header-left">' +
-            '<span class="notes-title-icon">' + clipSVG + '</span>' +
+            '<span class="notes-title-icon">' + notesSVG + '</span>' +
             '<span class="notes-panel-title">Notes</span>' +
+            '<select id="notesSessionSelect" class="notes-session-select" aria-label="Notes session"></select>' +
             '<span class="notes-panel-count" id="notesPanelCount">0</span>' +
           '</div>' +
           '<div class="notes-header-actions">' +
+            '<button id="notesNewSessionBtn" class="notes-icon-btn" title="Start a new notes session" aria-label="Start a new notes session">New session</button>' +
             '<button id="notesDownloadBtn" class="notes-icon-btn" title="Download notes as PDF" aria-label="Download notes as PDF">' +
               '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>' +
               'PDF' +
@@ -180,10 +248,8 @@
 
         '<div class="notes-panel-body" id="notesPanelBody">' +
           '<div class="notes-empty-state" id="notesEmptyState">' +
-            '<div class="notes-empty-icon">' +
-              '<svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.1"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><line x1="9" y1="12" x2="15" y2="12"/><line x1="9" y1="16" x2="13" y2="16"/></svg>' +
-            '</div>' +
-            '<p class="notes-empty-text">Select any text on the page and drag it here, or click the <strong>+</strong> button that appears near your selection.</p>' +
+            '<div class="notes-empty-icon">' + notesSVG + '</div>' +
+            '<p class="notes-empty-text">Select any text on the page and drag it here, or tap <strong>Add to Notes</strong> near your selection.</p>' +
             '<p class="notes-empty-hint">Sign in with Google to save notes to your private account.</p>' +
           '</div>' +
           '<div class="notes-list" id="notesList"></div>' +
@@ -197,7 +263,21 @@
       '</div>' +
 
       /* ── custom drag ghost (positioned by JS) ── */
-      '<div id="noteDragGhost" class="note-drag-ghost" aria-hidden="true"></div>'
+      '<div id="noteDragGhost" class="note-drag-ghost" aria-hidden="true"></div>' +
+
+      /* ── first-visit notes intro ── */
+      '<div id="notesOnboard" class="notes-onboard" hidden>' +
+        '<div class="notes-onboard-backdrop" id="notesOnboardBackdrop"></div>' +
+        '<div class="notes-onboard-card" role="dialog" aria-labelledby="notesOnboardTitle" aria-describedby="notesOnboardText">' +
+          '<button type="button" class="notes-onboard-close" id="notesOnboardClose" aria-label="Close">' +
+            '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>' +
+          '</button>' +
+          '<p class="notes-onboard-kicker">Notes</p>' +
+          '<h2 id="notesOnboardTitle" class="notes-onboard-title">Save what stays with you</h2>' +
+          '<p id="notesOnboardText" class="notes-onboard-text">Select any passage on the page, then drag it onto Notes — or tap <strong>Add to Notes</strong> when it appears. Your collection lives here, and you can download it as a PDF whenever you like.</p>' +
+          '<button type="button" class="sq-btn sq-btn--primary notes-onboard-done" id="notesOnboardDone">Got it<span class="sq-btn__glow" aria-hidden="true"></span></button>' +
+        '</div>' +
+      '</div>'
     );
   }
 
@@ -219,8 +299,9 @@
     li.id = 'notesNavItem';
     li.className = 'notes-nav-item';
     li.innerHTML =
-      '<button class="notes-nav-btn" id="notesNavBtn" title="Toggle Notes panel" aria-label="Toggle notes panel">' +
-        '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/></svg>' +
+      '<button class="sq-btn sq-btn--ghost notes-nav-btn" id="notesNavBtn" title="Toggle Notes panel" aria-label="Toggle notes panel">' +
+        '<span class="sq-btn__glow" aria-hidden="true"></span>' +
+        '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.4 3.6a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4 12.4-12.4z"/></svg>' +
         'Notes' +
         '<span class="notes-nav-badge" id="notesNavBadge" style="display:none">0</span>' +
       '</button>';
@@ -228,6 +309,45 @@
     else navLinks.appendChild(li);
 
     document.getElementById('notesNavBtn').addEventListener('click', _togglePanel);
+  }
+
+  /* ── Sessions ──────────────────────────────────────────────────── */
+  function _renderSessionSelect() {
+    var sel = document.getElementById('notesSessionSelect');
+    if (!sel) return;
+    var html = _sessions.map(function (s) {
+      return '<option value="' + _esc(s.id) + '"' +
+        (s.id === _sessionId ? ' selected' : '') + '>' +
+        _esc(s.name) + '</option>';
+    }).join('');
+    sel.innerHTML = html;
+    sel.value = _sessionId;
+  }
+
+  function _newSession() {
+    if (_notes.length && !window.confirm('Start a new notes session? Your current notes stay saved.')) {
+      return;
+    }
+    var id = _genId();
+    _sessions.unshift({
+      id: id,
+      name: _sessionLabel(),
+      created_at: new Date().toISOString()
+    });
+    _sessionId = id;
+    _persistSessions();
+    _notes = [];
+    _renderSessionSelect();
+    _renderAll();
+    if (!_panelOpen) _openPanel();
+  }
+
+  function _onSessionChange(e) {
+    var next = e.target && e.target.value;
+    if (!next || next === _sessionId) return;
+    _sessionId = next;
+    _persistSessions();
+    _loadNotes();
   }
 
   /* ── Panel open/close ───────────────────────────────────────────── */
@@ -319,8 +439,7 @@
       setTimeout(function() { card.remove(); _deleteNote(note.id); }, 200);
     });
 
-    /* insert newest-first */
-    if (list.firstChild) list.insertBefore(card, list.firstChild);
+    if (animate && list.firstChild) list.insertBefore(card, list.firstChild);
     else list.appendChild(card);
 
     /* animate in */
@@ -393,12 +512,11 @@
     var pill = document.getElementById('notesPill');
     if (!pill) return;
     pill.style.display = 'flex';
-    /* position: above selection, horizontally centred */
-    var scrollY = window.scrollY || window.pageYOffset || 0;
-    var scrollX = window.scrollX || window.pageXOffset || 0;
+    pill.style.position = 'fixed';
     var pW = pill.offsetWidth || 140;
-    var x  = rect.left + scrollX + rect.width / 2 - pW / 2;
-    var y  = rect.top  + scrollY - 46;
+    var x  = rect.left + rect.width / 2 - pW / 2;
+    var y  = rect.top - 46;
+    if (y < 8) y = rect.bottom + 8;
     pill.style.left = Math.max(8, Math.min(x, window.innerWidth - pW - 8)) + 'px';
     pill.style.top  = y + 'px';
     requestAnimationFrame(function() { pill.classList.add('visible'); });
@@ -434,6 +552,7 @@
       id: 'temp-' + _genId(),
       content: text,
       source_context: context,
+      session_id: _sessionId || 'default',
       created_at: new Date().toISOString()
     };
     if (!_panelOpen) _openPanel();
@@ -447,54 +566,65 @@
     _loadNotes().then(function() { _saveLocally(p.text, p.context); });
   });
 
-  /* ── Pill click (tap-to-save) ───────────────────────────────────── */
-  document.addEventListener('DOMContentLoaded', function() {
-    var pill = document.getElementById('notesPill');
-    if (!pill) return;
-    pill.addEventListener('click', function() {
-      if (!_selectionData) return;
-      var d = _selectionData;
-      _selectionData = null;
-      _hidePill();
-      _attemptSave(d.text, d.sourceContext);
-    });
-    pill.addEventListener('keydown', function(e) {
-      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); pill.click(); }
-    });
-  });
-
-  /* ── Custom Pointer Drag ─────────────────────────────────────────── */
-  /* We use pointer events so it works on touch + desktop uniformly.   */
-  document.addEventListener('DOMContentLoaded', function() {
+  /* ── Pill click + pointer drag (wired after the pill exists) ───── */
+  function _setupPill() {
     var pill  = document.getElementById('notesPill');
     var ghost = document.getElementById('noteDragGhost');
-    if (!pill || !ghost) return;
+    if (!pill) return;
 
     var _dragPayload   = null;
     var _ptrStartX     = 0, _ptrStartY = 0;
     var _ptrDragActive = false;
     var _ptrMoved      = false;
+    var _pillSavedAt   = 0;
     var THRESHOLD      = 8; /* px before we commit to drag */
 
-    pill.addEventListener('pointerdown', function(e) {
+    function _saveFromPill(text, ctx) {
+      if (!text) return;
+      var now = Date.now();
+      if (now - _pillSavedAt < 400) return;
+      _pillSavedAt = now;
+      _selectionData = null;
+      _dragPayload = null;
+      _hidePill();
+      try { window.getSelection().removeAllRanges(); } catch (ex) {}
+      _attemptSave(text, ctx);
+    }
+
+    pill.addEventListener('click', function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      if (!_selectionData) return;
+      _saveFromPill(_selectionData.text, _selectionData.sourceContext);
+    });
+    pill.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        if (!_selectionData) return;
+        _saveFromPill(_selectionData.text, _selectionData.sourceContext);
+      }
+    });
+
+    if (!ghost) return;
+
+    pill.addEventListener('pointerdown', function (e) {
       if (!_selectionData) return;
       _dragPayload   = { text: _selectionData.text, ctx: _selectionData.sourceContext };
       _ptrStartX     = e.clientX;
       _ptrStartY     = e.clientY;
       _ptrDragActive = true;
       _ptrMoved      = false;
-      pill.setPointerCapture(e.pointerId);
-      e.preventDefault(); /* prevent text de-selection */
+      try { pill.setPointerCapture(e.pointerId); } catch (ex) {}
+      e.preventDefault(); /* keep the text selection */
     });
 
-    pill.addEventListener('pointermove', function(e) {
+    pill.addEventListener('pointermove', function (e) {
       if (!_ptrDragActive) return;
 
       var dx = e.clientX - _ptrStartX;
       var dy = e.clientY - _ptrStartY;
 
-      if (!_ptrMoved && Math.sqrt(dx*dx + dy*dy) > THRESHOLD) {
-        /* ── commit to drag ── */
+      if (!_ptrMoved && Math.sqrt(dx * dx + dy * dy) > THRESHOLD) {
         _ptrMoved  = true;
         _isDragging = true;
         ghost.textContent = _dragPayload.text.length > 65
@@ -507,7 +637,6 @@
         _targetY = e.clientY;
         _startGhostFollow();
         document.body.classList.add('notes-dragging');
-        /* pulse the tab hint if panel is closed */
         if (!_panelOpen) {
           var tab = document.getElementById('notesTab');
           if (tab) tab.classList.add('pulse-hint');
@@ -519,7 +648,6 @@
         _targetX = e.clientX;
         _targetY = e.clientY;
 
-        /* drop-hover feedback */
         var overPanel = _isOverElement(e.clientX, e.clientY, '#notesPanel') ||
                         _isOverElement(e.clientX, e.clientY, '#notesTab');
         var panel = document.getElementById('notesPanel');
@@ -532,7 +660,7 @@
       }
     });
 
-    pill.addEventListener('pointerup', function(e) {
+    pill.addEventListener('pointerup', function (e) {
       if (!_ptrDragActive) return;
       _ptrDragActive = false;
       _stopGhostFollow();
@@ -549,15 +677,18 @@
                       _isOverElement(e.clientX, e.clientY, '#notesDropZone');
         if (dropped) {
           if (!_panelOpen) _openPanel();
-          _attemptSave(_dragPayload.text, _dragPayload.ctx);
+          _saveFromPill(_dragPayload.text, _dragPayload.ctx);
         }
+      } else if (_dragPayload) {
+        /* tap: pointerdown preventDefault suppresses click, so save here */
+        _saveFromPill(_dragPayload.text, _dragPayload.ctx);
       }
       _isDragging = false;
       _ptrMoved   = false;
       _dragPayload = null;
     });
 
-    pill.addEventListener('pointercancel', function() {
+    pill.addEventListener('pointercancel', function () {
       _ptrDragActive = false;
       _stopGhostFollow();
       ghost.style.display = 'none';
@@ -570,7 +701,7 @@
       _ptrMoved    = false;
       _dragPayload = null;
     });
-  });
+  }
 
   /* ── Ghost RAF lerp ────────────────────────────────────────────── */
   function _startGhostFollow() {
@@ -729,26 +860,68 @@
     return d.innerHTML;
   }
 
-  /* ── Event wiring (after DOM ready) ────────────────────────────── */
+  var ONBOARD_KEY = 'prabhupadNotesOnboarded';
+
+  function _maybeShowOnboard() {
+    try {
+      if (localStorage.getItem(ONBOARD_KEY)) return;
+    } catch (e) {}
+    var el = document.getElementById('notesOnboard');
+    var tab = document.getElementById('notesTab');
+    if (!el) return;
+    el.hidden = false;
+    requestAnimationFrame(function () {
+      el.classList.add('visible');
+      if (tab) tab.classList.add('pulse-hint');
+    });
+  }
+
+  function _dismissOnboard() {
+    var el = document.getElementById('notesOnboard');
+    var tab = document.getElementById('notesTab');
+    if (el) {
+      el.classList.remove('visible');
+      setTimeout(function () { el.hidden = true; }, 240);
+    }
+    if (tab) tab.classList.remove('pulse-hint');
+    try { localStorage.setItem(ONBOARD_KEY, '1'); } catch (e) {}
+  }
   document.addEventListener('DOMContentLoaded', function() {
+    _loadSessionState();
     _injectPanel();
     _injectNavBtn();
     _setupDropZone();
+    _setupPill();
+    _renderSessionSelect();
 
     /* panel controls */
     var tab       = document.getElementById('notesTab');
     var closeBtn  = document.getElementById('notesPanelClose');
     var dlBtn     = document.getElementById('notesDownloadBtn');
+    var newBtn    = document.getElementById('notesNewSessionBtn');
+    var sessionEl = document.getElementById('notesSessionSelect');
 
     if (tab)      { tab.addEventListener('click', _togglePanel); tab.addEventListener('keydown', function(e){ if(e.key==='Enter'||e.key===' ')_togglePanel(); }); }
     if (closeBtn) closeBtn.addEventListener('click', _closePanel);
     if (dlBtn)    dlBtn.addEventListener('click', _downloadPDF);
+    if (newBtn)   newBtn.addEventListener('click', _newSession);
+    if (sessionEl) sessionEl.addEventListener('change', _onSessionChange);
 
     /* load notes once auth is ready; retry on auth change */
     if (window.AuthState) window.AuthState.onAuthChange(function() { _loadNotes(); });
-
-    /* initial load (with short delay to allow auth.js to finish its async session check) */
     setTimeout(_loadNotes, 400);
+
+    var onboardClose = document.getElementById('notesOnboardClose');
+    var onboardDone  = document.getElementById('notesOnboardDone');
+    var onboardBack  = document.getElementById('notesOnboardBackdrop');
+    if (onboardClose) onboardClose.addEventListener('click', _dismissOnboard);
+    if (onboardDone)  onboardDone.addEventListener('click', _dismissOnboard);
+    if (onboardBack)  onboardBack.addEventListener('click', _dismissOnboard);
+    document.addEventListener('keydown', function (e) {
+      var board = document.getElementById('notesOnboard');
+      if (e.key === 'Escape' && board && board.classList.contains('visible')) _dismissOnboard();
+    });
+    setTimeout(_maybeShowOnboard, 900);
   });
 
 })();
