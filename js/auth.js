@@ -168,7 +168,7 @@
     var corner = document.getElementById('authCornerSignIn');
     if (corner) {
       corner.disabled = false;
-      corner.innerHTML = G_SVG + '<span>Sign in</span>';
+      corner.innerHTML = G_SVG + '<span>Sign in</span><span class="sq-btn__glow" aria-hidden="true"></span>';
     }
   }
 
@@ -188,6 +188,28 @@
       .replace(/</g, '&lt;')
       .replace(/>/g, '&gt;')
       .replace(/"/g, '&quot;');
+  }
+
+  function _closeDropdown() {
+    var dd = document.getElementById('authDropdown');
+    var btn = document.getElementById('authUserBtn');
+    if (dd) dd.classList.remove('open');
+    if (btn) btn.setAttribute('aria-expanded', 'false');
+  }
+
+  var _outsideBound = false;
+  function _bindOutsideClose() {
+    if (_outsideBound) return;
+    _outsideBound = true;
+    document.addEventListener('click', function (e) {
+      var dd = document.getElementById('authDropdown');
+      if (!dd || !dd.classList.contains('open')) return;
+      if (e.target.closest && e.target.closest('.auth-widget-wrap')) return;
+      _closeDropdown();
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') _closeDropdown();
+    });
   }
 
   function _renderCornerWidget(user) {
@@ -210,18 +232,19 @@
 
       wrap.innerHTML =
         '<div class="auth-widget-wrap">' +
-          '<button class="auth-avatar-btn auth-corner-avatar" id="authUserBtn" aria-label="My account" aria-haspopup="true">' +
+          '<button type="button" class="sq-btn sq-btn--ghost auth-avatar-btn" id="authUserBtn" aria-label="My account" aria-haspopup="menu" aria-expanded="false" aria-controls="authDropdown">' +
             (avatar
-              ? '<img src="' + _esc(avatar) + '" alt="" class="auth-avatar-img" referrerpolicy="no-referrer">'
-              : '<span class="auth-avatar-initials">' + first.charAt(0).toUpperCase() + '</span>') +
+              ? '<img src="' + _esc(avatar) + '" alt="" class="auth-avatar-img" width="22" height="22" referrerpolicy="no-referrer">'
+              : '<span class="auth-avatar-initials">' + _esc(first.charAt(0).toUpperCase()) + '</span>') +
             '<span class="auth-user-name">' + _esc(first) + '</span>' +
-            '<span class="auth-chevron" aria-hidden="true">▾</span>' +
+            '<svg class="auth-chevron" width="10" height="8" viewBox="0 0 12 8" aria-hidden="true"><path d="M1.2 1.2L6 6l4.8-4.8" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>' +
+            '<span class="sq-btn__glow" aria-hidden="true"></span>' +
           '</button>' +
           '<div class="auth-dropdown" id="authDropdown" role="menu">' +
-            '<div class="auth-dropdown-name">' + _esc(name) + '</div>' +
-            '<div class="auth-dropdown-email">' + _esc(user.email || '') + '</div>' +
+            '<p class="auth-dropdown-name">' + _esc(name) + '</p>' +
+            '<p class="auth-dropdown-email">' + _esc(user.email || '') + '</p>' +
             '<div class="auth-dropdown-divider"></div>' +
-            '<button class="auth-dropdown-btn" id="authSignOutBtn" role="menuitem">Sign out</button>' +
+            '<button type="button" class="sq-btn sq-btn--ghost auth-dropdown-btn" id="authSignOutBtn" role="menuitem">Sign out<span class="sq-btn__glow" aria-hidden="true"></span></button>' +
           '</div>' +
         '</div>';
 
@@ -229,23 +252,29 @@
       var dd = document.getElementById('authDropdown');
       if (btn && dd) {
         btn.addEventListener('click', function (e) {
+          e.preventDefault();
           e.stopPropagation();
-          dd.classList.toggle('open');
+          var open = !dd.classList.contains('open');
+          dd.classList.toggle('open', open);
+          btn.setAttribute('aria-expanded', open ? 'true' : 'false');
         });
       }
-      document.addEventListener('click', function () {
-        var d = document.getElementById('authDropdown');
-        if (d) d.classList.remove('open');
-      });
       var soBtn = document.getElementById('authSignOutBtn');
-      if (soBtn) soBtn.addEventListener('click', signOut);
+      if (soBtn) {
+        soBtn.addEventListener('click', function (e) {
+          e.stopPropagation();
+          _closeDropdown();
+          signOut();
+        });
+      }
       return;
     }
 
     wrap.innerHTML =
-      '<button class="auth-corner-signin" id="authCornerSignIn" type="button">' +
+      '<button class="sq-btn sq-btn--ghost auth-corner-signin" id="authCornerSignIn" type="button" aria-label="Sign in">' +
         G_SVG +
         '<span>Sign in</span>' +
+        '<span class="sq-btn__glow" aria-hidden="true"></span>' +
       '</button>';
 
     var signBtn = document.getElementById('authCornerSignIn');
@@ -260,12 +289,21 @@
   }
 
   function _injectCornerWidget() {
-    if (document.getElementById('authCorner')) return;
-    var el = document.createElement('div');
-    el.id = 'authCorner';
-    el.className = 'auth-corner';
-    el.innerHTML = '<div id="authCornerWidget" class="auth-corner-widget"></div>';
-    document.body.appendChild(el);
+    if (document.getElementById('authCornerWidget')) return;
+    var inner = document.querySelector('.nav-inner');
+    if (inner) {
+      var el = document.createElement('div');
+      el.id = 'authNavItem';
+      el.className = 'auth-nav-item';
+      el.innerHTML = '<div id="authCornerWidget" class="auth-corner-widget"></div>';
+      inner.appendChild(el);
+      return;
+    }
+    var fallback = document.createElement('div');
+    fallback.id = 'authCorner';
+    fallback.className = 'auth-corner';
+    fallback.innerHTML = '<div id="authCornerWidget" class="auth-corner-widget"></div>';
+    document.body.appendChild(fallback);
   }
 
   function showAuthModal() {
@@ -301,7 +339,7 @@
       '</div>' +
       '<h2 id="authModalTitle" class="auth-modal-title">Sign in to save notes</h2>' +
       '<p class="auth-modal-subtitle">Your notes are private and synced to your account. Sign in with Google to continue.</p>' +
-      '<button class="auth-google-btn" id="authGoogleBtn" type="button">' + G_SVG + ' Continue with Google</button>' +
+      '<button class="sq-btn sq-btn--primary auth-google-btn" id="authGoogleBtn" type="button">' + G_SVG + ' Continue with Google<span class="sq-btn__glow" aria-hidden="true"></span></button>' +
       '<p class="auth-modal-note">🔒 Only you can read your saved notes.</p>'
     );
   }
@@ -347,6 +385,7 @@
 
   document.addEventListener('DOMContentLoaded', async function () {
     _injectCornerWidget();
+    _bindOutsideClose();
     _injectModal();
 
     if (!_initSupabase()) {
