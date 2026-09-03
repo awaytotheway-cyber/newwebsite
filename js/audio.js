@@ -69,13 +69,18 @@ class HumanAudioPlayer {
         const option = document.createElement("option");
         option.value = voice.name;
         
-        let label = voice.name;
+        let name = voice.name
+          .replace(/^Google\s+/i, "")
+          .replace(/^Microsoft\s+/i, "")
+          .replace(/\s*-\s*English.*$/i, "");
+        if (name.length > 16) name = name.slice(0, 14) + "…";
+        let label = "Voice · " + name;
         if (
           voice.name.toLowerCase().includes("natural") ||
           voice.name.toLowerCase().includes("neural") ||
           voice.name.toLowerCase().includes("enhanced")
         ) {
-          label += " ✨ (Natural Human)";
+          label += " ★";
         }
 
         option.textContent = label;
@@ -175,7 +180,7 @@ class HumanAudioPlayer {
             <span class="audio-pulse-icon">🔊</span>
             <span class="audio-bar-text">Narrating in human-like voice…</span>
           </div>
-          <button class="audio-bar-stop" id="audioBarStopBtn">Stop Audio ⏹</button>
+          <button class="sq-btn sq-btn--ghost audio-bar-stop" id="audioBarStopBtn">Stop<span class="sq-btn__glow" aria-hidden="true"></span></button>
         </div>
       `;
       document.body.appendChild(bar);
