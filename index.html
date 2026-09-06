@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=Noto+Sans+Devanagari:wght@500;600;700&display=swap">
-<link rel="stylesheet" href="css/style.css?v=20260906-c">
+<link rel="stylesheet" href="css/style.css?v=20260906-d">
 </head>
 <body class="home-page">
 
@@ -102,7 +102,10 @@
       <span class="hero-wordmark__shiksha">SHIKSHA</span>
     </h1>
     <p class="micro-label hero-kicker">A living archive</p>
-    <img class="hero-peek" src="assets/images/krishna-peek.webp" alt="" width="673" height="498" aria-hidden="true">
+    <picture>
+      <source srcset="assets/images/krishna-peek.webp" type="image/webp">
+      <img class="hero-peek" src="assets/images/krishna-peek.png" alt="" width="673" height="498" aria-hidden="true">
+    </picture>
   </div>
   <div class="hero-follow">
     <p class="lede" id="heroSummaryText">
@@ -123,7 +126,10 @@
     </div>
   </div>
   <figure class="hero-portrait">
-    <img src="assets/images/srila-prabhupada-seated-vrindavan-temple-lake.webp" alt="Srila Prabhupada seated in saffron robes beside a temple lake in Vrindavan" width="713" height="670">
+    <picture>
+      <source srcset="assets/images/srila-prabhupada-seated-vrindavan-temple-lake.webp" type="image/webp">
+      <img src="assets/images/portrait-main.jpg" alt="Srila Prabhupada seated in saffron robes beside a temple lake in Vrindavan" width="713" height="670">
+    </picture>
   </figure>
 </header>
 
@@ -171,12 +177,42 @@
     </header>
   </div>
   <div class="gallery" id="photoGallery">
-    <figure class="gallery-item"><img src="assets/images/srila-prabhupada-childhood-calcutta-family.webp" alt="Young Abhay Charan De (Srila Prabhupada) with his parents Gour Mohan De and Rajani Devi in Calcutta" width="641" height="723" loading="lazy" decoding="async"></figure>
-    <figure class="gallery-item"><img src="assets/images/srila-prabhupada-walking-garden-garland.webp" alt="Srila Prabhupada walking in a garden in saffron robes with a red and white garland" width="475" height="716" loading="lazy" decoding="async"></figure>
-    <figure class="gallery-item"><img src="assets/images/srila-prabhupada-kirtan-gong.webp" alt="Srila Prabhupada seated at kirtan, striking a gong beside a microphone" width="442" height="672" loading="lazy" decoding="async"></figure>
-    <figure class="gallery-item"><img src="assets/images/srila-prabhupada-george-harrison-pattie-boyd.webp" alt="Srila Prabhupada with George Harrison and Pattie Boyd" width="850" height="707" loading="lazy" decoding="async"></figure>
-    <figure class="gallery-item"><img src="assets/images/srila-prabhupada-morning-walk-disciples.webp" alt="Srila Prabhupada on a morning walk with disciples" width="887" height="581" loading="lazy" decoding="async"></figure>
-    <figure class="gallery-item"><img src="assets/images/srila-prabhupada-vrindavan-kusuma-sarovara.webp" alt="Srila Prabhupada seated in saffron robes at Kusuma Sarovara, Vrindavan" width="713" height="670" loading="lazy" decoding="async"></figure>
+    <figure class="gallery-item">
+      <picture>
+        <source srcset="assets/images/srila-prabhupada-childhood-calcutta-family.webp" type="image/webp">
+        <img src="assets/images/photo-01.jpg" alt="Young Abhay Charan De (Srila Prabhupada) with his parents Gour Mohan De and Rajani Devi in Calcutta" width="641" height="723" loading="lazy" decoding="async">
+      </picture>
+    </figure>
+    <figure class="gallery-item">
+      <picture>
+        <source srcset="assets/images/srila-prabhupada-walking-garden-garland.webp" type="image/webp">
+        <img src="assets/images/photo-02.jpg" alt="Srila Prabhupada walking in a garden in saffron robes with a red and white garland" width="475" height="716" loading="lazy" decoding="async">
+      </picture>
+    </figure>
+    <figure class="gallery-item">
+      <picture>
+        <source srcset="assets/images/srila-prabhupada-kirtan-gong.webp" type="image/webp">
+        <img src="assets/images/photo-03.jpg" alt="Srila Prabhupada seated at kirtan, striking a gong beside a microphone" width="442" height="672" loading="lazy" decoding="async">
+      </picture>
+    </figure>
+    <figure class="gallery-item">
+      <picture>
+        <source srcset="assets/images/srila-prabhupada-george-harrison-pattie-boyd.webp" type="image/webp">
+        <img src="assets/images/photo-04.jpg" alt="Srila Prabhupada with George Harrison and Pattie Boyd" width="850" height="707" loading="lazy" decoding="async">
+      </picture>
+    </figure>
+    <figure class="gallery-item">
+      <picture>
+        <source srcset="assets/images/srila-prabhupada-morning-walk-disciples.webp" type="image/webp">
+        <img src="assets/images/photo-05.jpg" alt="Srila Prabhupada on a morning walk with disciples" width="887" height="581" loading="lazy" decoding="async">
+      </picture>
+    </figure>
+    <figure class="gallery-item">
+      <picture>
+        <source srcset="assets/images/srila-prabhupada-vrindavan-kusuma-sarovara.webp" type="image/webp">
+        <img src="assets/images/photo-06.jpg" alt="Srila Prabhupada seated in saffron robes at Kusuma Sarovara, Vrindavan" width="713" height="670" loading="lazy" decoding="async">
+      </picture>
+    </figure>
   </div>
 </section>
 
