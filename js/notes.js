@@ -217,23 +217,30 @@
         '<span class="notes-tab-badge" id="notesTabBadge">0</span>' +
       '</div>' +
 
+      '<div id="notesBackdrop" class="notes-backdrop" hidden></div>' +
+
       /* ── panel ── */
       '<aside id="notesPanel" class="notes-panel" aria-label="Notes" role="complementary">' +
+        '<div class="notes-sheet-handle" aria-hidden="true"></div>' +
         '<div class="notes-panel-header">' +
-          '<div class="notes-header-left">' +
-            '<span class="notes-title-icon">' + notesSVG + '</span>' +
-            '<span class="notes-panel-title">Notes</span>' +
-            '<select id="notesSessionSelect" class="notes-session-select" aria-label="Notes session"></select>' +
-            '<span class="notes-panel-count" id="notesPanelCount">0</span>' +
+          '<div class="notes-header-titles">' +
+            '<h2 class="notes-panel-title">Notes</h2>' +
+            '<div class="notes-header-meta">' +
+              '<label class="notes-folder">' +
+                '<select id="notesSessionSelect" class="notes-session-select" aria-label="Notes folder"></select>' +
+              '</label>' +
+              '<span class="notes-panel-count" id="notesPanelCount">No notes</span>' +
+            '</div>' +
           '</div>' +
           '<div class="notes-header-actions">' +
-            '<button id="notesNewSessionBtn" class="notes-icon-btn" title="Start a new notes session" aria-label="Start a new notes session">New session</button>' +
-            '<button id="notesDownloadBtn" class="notes-icon-btn" title="Download notes as PDF" aria-label="Download notes as PDF">' +
-              '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>' +
-              'PDF' +
+            '<button type="button" id="notesNewSessionBtn" class="notes-toolbar-btn" title="New notes folder" aria-label="Start a new notes folder">' +
+              '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>' +
             '</button>' +
-            '<button id="notesPanelClose" class="notes-close-btn" title="Close" aria-label="Close notes panel">' +
-              '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>' +
+            '<button type="button" id="notesDownloadBtn" class="notes-toolbar-btn" title="Download PDF" aria-label="Download notes as PDF">' +
+              '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>' +
+            '</button>' +
+            '<button type="button" id="notesPanelClose" class="notes-toolbar-btn" title="Close" aria-label="Close notes">' +
+              '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>' +
             '</button>' +
           '</div>' +
         '</div>' +
@@ -249,8 +256,9 @@
         '<div class="notes-panel-body" id="notesPanelBody">' +
           '<div class="notes-empty-state" id="notesEmptyState">' +
             '<div class="notes-empty-icon">' + notesSVG + '</div>' +
-            '<p class="notes-empty-text">Select any text on the page and drag it here, or tap <strong>Add to Notes</strong> near your selection.</p>' +
-            '<p class="notes-empty-hint">Sign in with Google to save notes to your private account.</p>' +
+            '<p class="notes-empty-title">No Notes</p>' +
+            '<p class="notes-empty-text">Select a passage, then tap <strong>Add to Notes</strong>.</p>' +
+            '<p class="notes-empty-hint">Sign in to keep them private across devices.</p>' +
           '</div>' +
           '<div class="notes-list" id="notesList"></div>' +
         '</div>' +
@@ -292,6 +300,7 @@
     var navLinks = document.getElementById('navLinks');
     if (!navLinks) return;
     var anchor = document.querySelector('.translate-nav-item');
+    var authItem = document.getElementById('authNavItem');
     var li = document.createElement('li');
     li.id = 'notesNavItem';
     li.className = 'notes-nav-item';
@@ -303,6 +312,7 @@
         '<span class="notes-nav-badge" id="notesNavBadge" style="display:none">0</span>' +
       '</button>';
     if (anchor && anchor.parentElement === navLinks) navLinks.insertBefore(li, anchor);
+    else if (authItem && authItem.parentNode === navLinks) navLinks.insertBefore(li, authItem);
     else navLinks.appendChild(li);
 
     document.getElementById('notesNavBtn').addEventListener('click', _togglePanel);
@@ -348,15 +358,23 @@
   }
 
   /* ── Panel open/close ───────────────────────────────────────────── */
+  function _setBackdrop(open) {
+    var backdrop = document.getElementById('notesBackdrop');
+    if (!backdrop) return;
+    backdrop.hidden = !open;
+    backdrop.classList.toggle('open', open);
+  }
   function _openPanel() {
     _panelOpen = true;
     document.getElementById('notesPanel').classList.add('open');
     document.getElementById('notesTab').classList.add('panel-open');
+    _setBackdrop(true);
   }
   function _closePanel() {
     _panelOpen = false;
     document.getElementById('notesPanel').classList.remove('open');
     document.getElementById('notesTab').classList.remove('panel-open');
+    _setBackdrop(false);
   }
   function _togglePanel() { _panelOpen ? _closePanel() : _openPanel(); }
 
@@ -367,7 +385,7 @@
     var panelCnt  = document.getElementById('notesPanelCount');
     var navBadge  = document.getElementById('notesNavBadge');
     if (tabBadge)  { tabBadge.textContent  = n; tabBadge.style.display  = n ? 'flex' : 'none'; }
-    if (panelCnt)  panelCnt.textContent = n;
+    if (panelCnt)  panelCnt.textContent = n === 0 ? 'No notes' : (n === 1 ? '1 note' : (n + ' notes'));
     if (navBadge)  { navBadge.textContent  = n; navBadge.style.display  = n ? 'flex' : 'none'; }
   }
 
@@ -903,6 +921,19 @@
     if (dlBtn)    dlBtn.addEventListener('click', _downloadPDF);
     if (newBtn)   newBtn.addEventListener('click', _newSession);
     if (sessionEl) sessionEl.addEventListener('change', _onSessionChange);
+
+    var backdrop = document.getElementById('notesBackdrop');
+    if (backdrop) backdrop.addEventListener('click', _closePanel);
+
+    document.addEventListener('pointerdown', function (e) {
+      if (!_panelOpen) return;
+      var el = e.target && e.target.nodeType === 1 ? e.target : e.target && e.target.parentElement;
+      if (el && el.closest && el.closest('#notesPanel, #notesTab, #notesNavBtn, #notesNavItem, #notesPill, #notesOnboard')) return;
+      _closePanel();
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && _panelOpen) _closePanel();
+    });
 
     /* load notes once auth is ready; retry on auth change */
     if (window.AuthState) window.AuthState.onAuthChange(function() { _loadNotes(); });
