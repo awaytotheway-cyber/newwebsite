@@ -9,8 +9,11 @@
    ============================================================ */
 
 window.SITE_CONFIG = {
-  // The URL of your RAG backend's query endpoint.
+  // POST { session_id, chatInput } — AI Agent chat webhook
   RAG_API_ENDPOINT: "https://prabhupadarchives.pikapod.net/webhook/dac33c95-5aaf-4900-94fe-4b3b31b6e1b9",
+
+  // GET ?session_id=… → { messages: [{ role, content }] }
+  RAG_HISTORY_ENDPOINT: "https://prabhupadarchives.pikapod.net/webhook/3241a771-1cb1-42d7-a9dd-18ac2cf1ec63",
 
   // ── Supabase (for Notes + Google Auth) ──────────────────────────
   // Follow the setup guide in the implementation plan to get these values.
