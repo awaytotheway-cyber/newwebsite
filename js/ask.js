@@ -1,24 +1,149 @@
 /* ============================================================
    ASK THE ARCHIVE — chat logic
    ------------------------------------------------------------
-   The only function you need to touch for RAG integration is
-   queryArchive(question) below. Right now it calls whatever
-   endpoint is set in js/config.js (window.SITE_CONFIG.RAG_API_ENDPOINT).
-   If that's empty, it returns a clear placeholder instead of
-   pretending to have an answer.
-
-   Expected backend contract (adjust to match your pipeline):
-     POST { question: string }  →  { answer: string }
+   POST { session_id, chatInput }  →  { answer | output | text }
+   GET  RAG_HISTORY_ENDPOINT?session_id=…  →  { messages: [{ role, content }] }
    ============================================================ */
 
-async function queryArchive(question) {
+const SESSION_KEY = "sp_session_id";
+
+function fallbackUuid() {
+  return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function (c) {
+    const r = (Math.random() * 16) | 0;
+    return (c === "x" ? r : (r & 0x3) | 0x8).toString(16);
+  });
+}
+
+function getOrCreateSessionId() {
+  try {
+    const existing = localStorage.getItem(SESSION_KEY);
+    if (existing) return existing;
+    const id = (window.crypto && crypto.randomUUID)
+      ? crypto.randomUUID()
+      : fallbackUuid();
+    localStorage.setItem(SESSION_KEY, id);
+    return id;
+  } catch (err) {
+    return (window.crypto && crypto.randomUUID)
+      ? crypto.randomUUID()
+      : fallbackUuid();
+  }
+}
+
+function historyEndpoint() {
+  return (window.SITE_CONFIG && window.SITE_CONFIG.RAG_HISTORY_ENDPOINT) || "";
+}
+
+function spinnerHtml() {
+  return '<div class="loader-spinner" aria-hidden="true"><div class="inner one"></div><div class="inner two"></div><div class="inner three"></div></div>';
+}
+
+function setChatStatus(kind, text) {
+  const log = document.getElementById("chatLog");
+  let el = document.getElementById("chatStatus");
+  if (!text) {
+    if (el) el.remove();
+    return null;
+  }
+  if (!log) return null;
+  if (!el) {
+    el = document.createElement("div");
+    el.id = "chatStatus";
+    log.appendChild(el);
+  }
+  el.className = "chat-status" + (kind ? " chat-status--" + kind : "");
+  el.setAttribute("role", "status");
+  el.innerHTML = (kind === "loading" ? spinnerHtml() : "") +
+    "<p>" + escapeHtml(text) + "</p>";
+  log.scrollTop = log.scrollHeight;
+  return el;
+}
+
+function showChatInput() {
+  const inputBar = document.getElementById("chatInputBar") ||
+    document.querySelector(".chat-input-sticky");
+  if (inputBar) inputBar.hidden = false;
+}
+
+function normalizeHistory(data) {
+  if (!data) return [];
+  if (typeof data === "string") {
+    const trimmed = data.trim();
+    if (!trimmed) return [];
+    try {
+      data = JSON.parse(trimmed);
+    } catch (err) {
+      return [];
+    }
+  }
+  if (Array.isArray(data)) {
+    if (data.length === 1 && data[0] && data[0].messages) data = data[0].messages;
+  } else if (data.messages) {
+    data = data.messages;
+  } else {
+    return [];
+  }
+  if (!Array.isArray(data)) return [];
+
+  return data.reduce(function (acc, item) {
+    if (!item || typeof item !== "object") return acc;
+    const text = String(item.content || item.text || item.message || "").trim();
+    if (!text) return acc;
+    const roleRaw = String(item.role || "").toLowerCase();
+    const role = (roleRaw === "user" || roleRaw === "visitor" || roleRaw === "human")
+      ? "visitor"
+      : "archive";
+    acc.push({ role: role, text: text });
+    return acc;
+  }, []);
+}
+
+async function loadChatHistory(sessionId) {
+  const endpoint = historyEndpoint();
+  if (!endpoint || !sessionId) return;
+
+  setChatStatus("loading", "Loading your conversation…");
+
+  const controller = new AbortController();
+  const timeout = setTimeout(function () { controller.abort(); }, 12000);
+
+  try {
+    const url = endpoint + (endpoint.indexOf("?") >= 0 ? "&" : "?") +
+      "session_id=" + encodeURIComponent(sessionId);
+    const response = await fetch(url, {
+      method: "GET",
+      mode: "cors",
+      signal: controller.signal,
+    });
+    clearTimeout(timeout);
+
+    if (!response.ok) {
+      setChatStatus("error", "Couldn't restore earlier messages. You can still ask.");
+      return;
+    }
+
+    const contentType = response.headers.get("content-type") || "";
+    const data = contentType.includes("application/json")
+      ? await response.json()
+      : await response.text();
+    const messages = normalizeHistory(data);
+    setChatStatus("", "");
+    messages.forEach(function (m) {
+      appendMessage(m.role, m.text);
+    });
+  } catch (err) {
+    clearTimeout(timeout);
+    setChatStatus("error", "Couldn't restore earlier messages. You can still ask.");
+  }
+}
+
+async function queryArchive(question, sessionId) {
   const endpoint = window.SITE_CONFIG && window.SITE_CONFIG.RAG_API_ENDPOINT;
 
   if (!endpoint) {
     return `The archive is not yet connected. Once a backend is configured, I will answer "${question}" using the full record of Srila Prabhupada's life.`;
   }
 
-  // 30-second timeout so the UI never hangs indefinitely
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 30000);
 
@@ -27,7 +152,10 @@ async function queryArchive(question) {
       method: "POST",
       mode: "cors",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ question }),
+      body: JSON.stringify({
+        session_id: sessionId,
+        chatInput: question,
+      }),
       signal: controller.signal,
     });
 
@@ -37,10 +165,8 @@ async function queryArchive(question) {
       throw new Error(`Backend responded with ${response.status}`);
     }
 
-    // --- Flexible response parsing for n8n webhook outputs ---
     const contentType = response.headers.get("content-type") || "";
 
-    // If n8n returns plain text instead of JSON
     if (!contentType.includes("application/json")) {
       const text = (await response.text()).trim();
       return text || "The archive didn't return an answer for that.";
@@ -48,26 +174,23 @@ async function queryArchive(question) {
 
     let data = await response.json();
 
-    // n8n sometimes wraps the result in an array
     if (Array.isArray(data)) {
       data = data[0] || {};
     }
 
-    // Try every common n8n output field in priority order
     const answer =
-      data.answer ||          // custom Respond-to-Webhook body
-      data.output ||          // AI Agent / Chain node
-      data.text ||            // Chat model / LLM node
-      data.response ||        // generic alias
-      data.message ||         // some custom setups
-      data.result ||          // another common alias
+      data.answer ||
+      data.output ||
+      data.text ||
+      data.response ||
+      data.message ||
+      data.result ||
       (typeof data === "string" ? data : null);
 
     if (answer) {
       return typeof answer === "string" ? answer : JSON.stringify(answer);
     }
 
-    // Last resort: if none of the known keys matched, stringify the whole object
     console.warn("queryArchive: unexpected response shape", data);
     return typeof data === "object"
       ? JSON.stringify(data)
@@ -94,12 +217,12 @@ function appendMessage(role, text, pending = false) {
   msg.className = `msg from-${role}${pending ? " pending" : ""}`;
 
   const bubbleContent = pending
-    ? `<div class="loader-spinner"><div class="inner one"></div><div class="inner two"></div><div class="inner three"></div></div>`
+    ? spinnerHtml()
     : escapeHtml(text);
 
   msg.innerHTML = `
     <span class="label">${role === "visitor" ? "You" : "The Archive"}</span>
-    <div class="bubble${pending ? ' bubble--loading' : ''}">${bubbleContent}</div>
+    <div class="bubble${pending ? " bubble--loading" : ""}">${bubbleContent}</div>
   `;
   log.appendChild(msg);
   log.scrollTop = log.scrollHeight;
@@ -118,14 +241,15 @@ async function handleAsk() {
   const question = input.value.trim();
   if (!question) return;
 
+  setChatStatus("", "");
   appendMessage("visitor", question);
   input.value = "";
   input.style.height = "auto";
   sendBtn.disabled = true;
 
   const pendingMsg = appendMessage("archive", "", true);
-
-  const answer = await queryArchive(question);
+  const sessionId = getOrCreateSessionId();
+  const answer = await queryArchive(question, sessionId);
 
   pendingMsg.remove();
   appendMessage("archive", answer);
@@ -133,10 +257,14 @@ async function handleAsk() {
   input.focus();
 }
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
   const input = document.getElementById("chatInput");
   const sendBtn = document.getElementById("chatSend");
   const micBtn = document.getElementById("chatMic");
+  const sessionId = getOrCreateSessionId();
+
+  await loadChatHistory(sessionId);
+  showChatInput();
 
   sendBtn.addEventListener("click", handleAsk);
   input.addEventListener("keydown", (e) => {
