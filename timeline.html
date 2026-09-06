@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=Noto+Sans+Devanagari:wght@500;600;700&display=swap">
-<link rel="stylesheet" href="css/style.css?v=20260906-c">
+<link rel="stylesheet" href="css/style.css?v=20260906-d">
 </head>
 <body class="travel-timeline-page">
 
@@ -109,7 +109,10 @@
 
 <main class="wrap travel-main-wrap">
   <section class="visualizer-card" id="map-section" aria-label="Animated World Travel Map">
-    <img class="visualizer-sitter" src="assets/images/krishna-sit.webp" alt="" width="703" height="871" aria-hidden="true">
+    <picture>
+      <source srcset="assets/images/krishna-sit.webp" type="image/webp">
+      <img class="visualizer-sitter" src="assets/images/krishna-sit.png" alt="" width="703" height="871" aria-hidden="true">
+    </picture>
     <div class="visualizer-header">
       <div class="visualizer-title-group">
         <h2>Global Journey Visualizer</h2>
@@ -126,7 +129,10 @@
         <div class="time-label">Current date</div>
         <div class="time-readout" id="timeReadout" data-month="AUG" data-year="1965"></div>
       </div>
-      <img class="world-img" id="worldImg" src="assets/images/srila-prabhupada-world-travel-map.webp" alt="Gold world map of Srila Prabhupada’s international travels from 1965 to 1977" width="1000" height="588">
+      <picture>
+        <source srcset="assets/images/srila-prabhupada-world-travel-map.webp" type="image/webp">
+        <img class="world-img" id="worldImg" src="assets/images/world-map-gold.jpg" alt="Gold world map of Srila Prabhupada’s international travels from 1965 to 1977" width="1000" height="588">
+      </picture>
       <canvas class="travel-canvas" id="travelCanvas" width="1000" height="588"></canvas>
     </div>
 
