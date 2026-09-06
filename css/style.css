@@ -442,6 +442,7 @@ html.nav-open .auth-corner { visibility: hidden; }
   margin: 0.85rem var(--pad) 0;
   color: var(--saffron-fg);
 }
+.hero-block > picture { display: contents; }
 .hero-peek {
   position: relative;
   z-index: 3;
@@ -643,6 +644,7 @@ a.body-link:hover { color: var(--saffron); }
   box-shadow: 5px 5px 0 var(--saffron);
   overflow: hidden;
 }
+.gallery-item picture { display: block; }
 .gallery-item img {
   width: 100%;
   height: auto;
@@ -937,6 +939,8 @@ body.ask-page {
   position: relative;
   overflow: visible;
 }
+.visualizer-card > picture { display: contents; }
+.map-stage > picture { display: contents; }
 .visualizer-sitter {
   position: absolute;
   right: 0.2rem;
