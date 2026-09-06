@@ -235,6 +235,26 @@ function escapeHtml(str) {
   return div.innerHTML;
 }
 
+function hasChatMessages() {
+  return !!document.querySelector("#chatLog .msg");
+}
+
+function resetChatSession() {
+  if (!hasChatMessages() && !document.getElementById("chatStatus")) {
+    return;
+  }
+  if (!window.confirm("Clear this conversation? A new anonymous session will start.")) {
+    return;
+  }
+  try {
+    var id = (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : fallbackUuid();
+    localStorage.setItem(SESSION_KEY, id);
+  } catch (err) {}
+  document.querySelectorAll("#chatLog .msg, #chatStatus").forEach(function (el) {
+    el.remove();
+  });
+}
+
 async function handleAsk() {
   const input = document.getElementById("chatInput");
   const sendBtn = document.getElementById("chatSend");
@@ -265,6 +285,9 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   await loadChatHistory(sessionId);
   showChatInput();
+
+  const clearBtn = document.getElementById("clearChatBtn");
+  if (clearBtn) clearBtn.addEventListener("click", resetChatSession);
 
   sendBtn.addEventListener("click", handleAsk);
   input.addEventListener("keydown", (e) => {
